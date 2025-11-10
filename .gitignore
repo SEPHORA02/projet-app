@@ -6,6 +6,10 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+/README_DJANGO.md
+./run.sh
+./setup.sh
+./stop.sh 
 
 # Django
 *.log

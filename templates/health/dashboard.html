@@ -1,0 +1,674 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-Santé 4.0 - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .tab-button {
+        transition: all 0.3s;
+      }
+
+      .tab-button.active {
+        background-color: white;
+        color: #2563eb;
+        border-bottom: 2px solid #2563eb;
+      }
+
+      .progress-bar {
+        transition: width 0.5s ease;
+      }
+
+      .card {
+        transition: box-shadow 0.3s;
+      }
+
+      .card:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body
+    class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50"
+  >
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 shadow-sm">
+      <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-12 h-12 bg-gradient-to-br from-blue-500 to-green-500 rounded-xl flex items-center justify-center"
+            >
+              <i data-lucide="activity" class="w-6 h-6 text-white"></i>
+            </div>
+            <div>
+              <h1 class="text-2xl font-bold text-gray-900">E-Santé 4.0</h1>
+              <p class="text-gray-600 text-sm">
+                Système intelligent de prévention des maladies respiratoires
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="text-right">
+              <p
+                class="text-lg font-semibold text-gray-900"
+                id="current-date"
+              ></p>
+              <p class="text-gray-600 text-sm" id="current-time"></p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-gray-600">{{ user.get_full_name|default:user.username }}</span>
+              <a href="{% url 'admin:logout' %}" class="text-sm text-blue-600 hover:underline">Déconnexion</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-8">
+      <!-- Tabs Navigation -->
+      <div
+        class="mb-6 bg-white border border-gray-200 rounded-lg p-1 inline-flex gap-1"
+      >
+        <button
+          onclick="switchTab('overview')"
+          class="tab-button active px-4 py-2 rounded-md flex items-center gap-2"
+          id="tab-overview"
+        >
+          <i data-lucide="activity" class="w-4 h-4"></i>
+          Vue d'ensemble
+        </button>
+        <button
+          onclick="switchTab('environment')"
+          class="tab-button px-4 py-2 rounded-md flex items-center gap-2"
+          id="tab-environment"
+        >
+          <i data-lucide="wind" class="w-4 h-4"></i>
+          Environnement
+        </button>
+        <button
+          onclick="switchTab('trends')"
+          class="tab-button px-4 py-2 rounded-md flex items-center gap-2"
+          id="tab-trends"
+        >
+          <i data-lucide="trending-up" class="w-4 h-4"></i>
+          Tendances
+        </button>
+        <button
+          onclick="switchTab('alerts')"
+          class="tab-button px-4 py-2 rounded-md flex items-center gap-2"
+          id="tab-alerts"
+        >
+          <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+          Alertes
+        </button>
+      </div>
+
+      <!-- Tab Content: Vue d'ensemble -->
+      <div id="overview-content" class="tab-content active space-y-6">
+        <!-- Patient Card -->
+        <div
+          class="bg-gradient-to-r from-blue-50 to-green-50 border border-gray-200 rounded-xl shadow-sm p-6"
+        >
+          <div class="flex items-center gap-6">
+            <div
+              class="w-20 h-20 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center"
+            >
+              <i data-lucide="user" class="w-10 h-10 text-white"></i>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <h2 class="text-2xl font-semibold text-gray-900">
+                  {{ patient.user.get_full_name|default:patient.user.username }}
+                </h2>
+                {% if patient.is_active %}
+                <span
+                  class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium"
+                  >Surveillance active</span
+                >
+                {% else %}
+                <span
+                  class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium"
+                  >Surveillance inactive</span
+                >
+                {% endif %}
+              </div>
+              <div
+                class="grid grid-cols-1 md:grid-cols-3 gap-4 text-gray-600 mb-3"
+              >
+                <div class="flex items-center gap-2">
+                  <i data-lucide="calendar" class="w-4 h-4"></i>
+                  <span>Âge: {{ patient.age }} ans</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="map-pin" class="w-4 h-4"></i>
+                  <span>{{ patient.location }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="activity" class="w-4 h-4"></i>
+                  <span>Capteurs connectés: {{ patient.sensors_status }}</span>
+                </div>
+              </div>
+              <p class="text-gray-600 text-sm">
+                <span class="font-semibold text-gray-700"
+                  >Profil de santé:</span
+                >
+                {{ patient.health_profile }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Health Metrics -->
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">
+            Données Physiologiques
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Heart Rate Card -->
+            <div
+              class="card bg-white border border-gray-200 rounded-xl shadow-sm p-6"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-gray-700">Rythme Cardiaque</h3>
+                <div class="p-2 rounded-lg bg-green-50 text-green-600">
+                  <i data-lucide="heart" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="flex items-baseline gap-2 mb-4">
+                <span class="text-4xl font-bold text-gray-900">{{ physiological.heart_rate }}</span>
+                <span class="text-xl text-gray-600">bpm</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+                <div
+                  class="bg-green-500 h-2 rounded-full progress-bar"
+                  style="width: {% widthratio physiological.heart_rate 100 1 %}%"
+                ></div>
+              </div>
+              <div class="flex items-center justify-between mb-3">
+                <span
+                  class="bg-green-50 text-green-600 px-3 py-1 rounded-full text-sm font-medium"
+                  >Normal</span
+                >
+                <div class="flex items-center gap-1 text-sm text-orange-600">
+                  <i data-lucide="trending-up" class="w-4 h-4"></i>
+                  <span>2</span>
+                </div>
+              </div>
+              <p class="text-gray-600 text-sm">Plage normale: 60 - 100 bpm</p>
+            </div>
+
+            <!-- Oxygen Saturation Card -->
+            <div
+              class="card bg-white border border-gray-200 rounded-xl shadow-sm p-6"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-gray-700">Saturation O₂</h3>
+                <div class="p-2 rounded-lg bg-green-50 text-green-600">
+                  <i data-lucide="droplet" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="flex items-baseline gap-2 mb-4">
+                <span class="text-4xl font-bold text-gray-900">{{ physiological.oxygen_saturation }}</span>
+                <span class="text-xl text-gray-600">%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+                <div
+                  class="bg-green-500 h-2 rounded-full progress-bar"
+                  style="width: {{ physiological.oxygen_saturation }}%"
+                ></div>
+              </div>
+              <div class="flex items-center justify-between mb-3">
+                <span
+                  class="bg-green-50 text-green-600 px-3 py-1 rounded-full text-sm font-medium"
+                  >Normal</span
+                >
+                <div class="flex items-center gap-1 text-sm text-blue-600">
+                  <i data-lucide="trending-down" class="w-4 h-4"></i>
+                  <span>0</span>
+                </div>
+              </div>
+              <p class="text-gray-600 text-sm">Plage normale: 95 - 100 %</p>
+            </div>
+
+            <!-- Temperature Card -->
+            <div
+              class="card bg-white border border-gray-200 rounded-xl shadow-sm p-6"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-gray-700">Température</h3>
+                <div class="p-2 rounded-lg bg-green-50 text-green-600">
+                  <i data-lucide="thermometer" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="flex items-baseline gap-2 mb-4">
+                <span class="text-4xl font-bold text-gray-900">{{ physiological.temperature }}</span>
+                <span class="text-xl text-gray-600">°C</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+                <div
+                  class="bg-green-500 h-2 rounded-full progress-bar"
+                  style="width: {% widthratio physiological.temperature 37.2 100 %}%"
+                ></div>
+              </div>
+              <div class="flex items-center justify-between mb-3">
+                <span
+                  class="bg-green-50 text-green-600 px-3 py-1 rounded-full text-sm font-medium"
+                  >Normal</span
+                >
+                <div class="flex items-center gap-1 text-sm text-orange-600">
+                  <i data-lucide="trending-up" class="w-4 h-4"></i>
+                  <span>0.2</span>
+                </div>
+              </div>
+              <p class="text-gray-600 text-sm">Plage normale: 36.1 - 37.2 °C</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Environment Metrics -->
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">
+            Conditions Environnementales
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Air Quality -->
+            <div
+              class="card bg-white border border-gray-200 rounded-xl shadow-sm p-6"
+            >
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold text-gray-700">Qualité de l'air</h3>
+                <div class="p-2 rounded-lg bg-green-50 text-green-600">
+                  <i data-lucide="wind" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="flex items-baseline gap-2 mb-3">
+                <span class="text-3xl font-bold text-gray-900">{{ environmental.air_quality_index }}</span>
+                <span class="text-lg text-gray-600">AQI</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
+                <div
+                  class="bg-green-500 h-2 rounded-full"
+                  style="width: {% widthratio environmental.air_quality_index 100 1 %}%"
+                ></div>
+              </div>
+              <span
+                class="bg-green-50 text-green-600 px-3 py-1 rounded-full text-sm font-medium"
+                >Excellent</span
+              >
+            </div>
+
+            <!-- CO2 -->
+            <div
+              class="card bg-white border border-gray-200 rounded-xl shadow-sm p-6"
+            >
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold text-gray-700">CO₂</h3>
+                <div class="p-2 rounded-lg bg-blue-50 text-blue-600">
+                  <i data-lucide="cloud" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="flex items-baseline gap-2 mb-3">
+                <span class="text-3xl font-bold text-gray-900">{{ environmental.co2_level }}</span>
+                <span class="text-lg text-gray-600">ppm</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
+                <div
+                  class="bg-blue-500 h-2 rounded-full"
+                  style="width: {% widthratio environmental.co2_level 1000 1 %}%"
+                ></div>
+              </div>
+              <span
+                class="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium"
+                >Normal</span
+              >
+            </div>
+
+            <!-- Humidity -->
+            <div
+              class="card bg-white border border-gray-200 rounded-xl shadow-sm p-6"
+            >
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold text-gray-700">Humidité</h3>
+                <div class="p-2 rounded-lg bg-blue-50 text-blue-600">
+                  <i data-lucide="droplets" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="flex items-baseline gap-2 mb-3">
+                <span class="text-3xl font-bold text-gray-900">{{ environmental.humidity }}</span>
+                <span class="text-lg text-gray-600">%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
+                <div
+                  class="bg-blue-500 h-2 rounded-full"
+                  style="width: {{ environmental.humidity }}%"
+                ></div>
+              </div>
+              <span
+                class="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium"
+                >Normal</span
+              >
+            </div>
+
+            <!-- PM2.5 -->
+            <div
+              class="card bg-white border border-gray-200 rounded-xl shadow-sm p-6"
+            >
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold text-gray-700">Particules PM2.5</h3>
+                <div class="p-2 rounded-lg bg-green-50 text-green-600">
+                  <i data-lucide="circle" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="flex items-baseline gap-2 mb-3">
+                <span class="text-3xl font-bold text-gray-900">{{ environmental.pm25 }}</span>
+                <span class="text-lg text-gray-600">µg/m³</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
+                <div
+                  class="bg-green-500 h-2 rounded-full"
+                  style="width: {% widthratio environmental.pm25 50 1 %}%"
+                ></div>
+              </div>
+              <span
+                class="bg-green-50 text-green-600 px-3 py-1 rounded-full text-sm font-medium"
+                >Excellent</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts Panel -->
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-semibold text-gray-900">
+              Alertes & Notifications
+            </h2>
+            <span
+              class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"
+              >{{ recent_alerts|length }} nouvelle{{ recent_alerts|length|pluralize }}</span
+            >
+          </div>
+          <div class="space-y-4">
+            {% for alert in recent_alerts %}
+            <div class="border border-gray-200 rounded-lg p-4">
+              <div class="flex items-start gap-3">
+                <div class="{% if alert.alert_type == 'info' %}text-blue-600{% elif alert.alert_type == 'success' %}text-green-600{% elif alert.alert_type == 'warning' %}text-yellow-600{% else %}text-red-600{% endif %} mt-0.5">
+                  <i data-lucide="{% if alert.alert_type == 'info' %}info{% elif alert.alert_type == 'success' %}check-circle-2{% elif alert.alert_type == 'warning' %}alert-triangle{% else %}alert-circle{% endif %}" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between mb-2">
+                    <h3 class="font-semibold text-gray-900">{{ alert.title }}</h3>
+                    <span
+                      class="{% if alert.level == 'low' %}bg-blue-100 text-blue-700{% elif alert.level == 'medium' %}bg-yellow-100 text-yellow-700{% elif alert.level == 'high' %}bg-orange-100 text-orange-700{% else %}bg-red-100 text-red-700{% endif %} px-2 py-1 rounded text-xs font-medium"
+                      >{{ alert.get_level_display }}</span
+                    >
+                  </div>
+                  <p class="text-gray-600 text-sm mb-2">
+                    {{ alert.message }}
+                  </p>
+                  <p class="text-gray-500 text-xs">{{ alert.created_at|timesince }} ago</p>
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <p class="text-gray-500 text-center py-4">Aucune alerte récente</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Environment (Hidden by default) -->
+      <div id="environment-content" class="tab-content space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">
+              Qualité de l'Air - Détails
+            </h2>
+            <div class="space-y-4">
+              <div
+                class="flex justify-between items-center p-4 bg-green-50 rounded-lg"
+              >
+                <span class="text-gray-700 font-medium">Indice AQI</span>
+                <span class="text-green-700 font-semibold">{{ environmental.air_quality_index }} - Bon</span>
+              </div>
+              <div
+                class="flex justify-between items-center p-4 bg-blue-50 rounded-lg"
+              >
+                <span class="text-gray-700 font-medium"
+                  >CO (Monoxyde de carbone)</span
+                >
+                <span class="text-blue-700 font-semibold">{{ environmental.co_level }} ppm</span>
+              </div>
+              <div
+                class="flex justify-between items-center p-4 bg-yellow-50 rounded-lg"
+              >
+                <span class="text-gray-700 font-medium"
+                  >NO₂ (Dioxyde d'azote)</span
+                >
+                <span class="text-yellow-700 font-semibold">{{ environmental.no2_level }} ppb</span>
+              </div>
+              <div
+                class="flex justify-between items-center p-4 bg-green-50 rounded-lg"
+              >
+                <span class="text-gray-700 font-medium">O₃ (Ozone)</span>
+                <span class="text-green-700 font-semibold">{{ environmental.o3_level }} ppb</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">
+              Recommandations
+            </h2>
+            <div class="space-y-3">
+              <div class="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
+                <i
+                  data-lucide="check-circle"
+                  class="w-5 h-5 text-green-600 mt-0.5"
+                ></i>
+                <div>
+                  <p class="font-medium text-gray-900">
+                    Qualité de l'air excellente
+                  </p>
+                  <p class="text-sm text-gray-600">
+                    Conditions idéales pour les activités extérieures
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                <i data-lucide="wind" class="w-5 h-5 text-blue-600 mt-0.5"></i>
+                <div>
+                  <p class="font-medium text-gray-900">Ventilation optimale</p>
+                  <p class="text-sm text-gray-600">
+                    Maintenir une bonne circulation d'air
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
+                <i
+                  data-lucide="droplets"
+                  class="w-5 h-5 text-purple-600 mt-0.5"
+                ></i>
+                <div>
+                  <p class="font-medium text-gray-900">Humidité confortable</p>
+                  <p class="text-sm text-gray-600">
+                    Niveau d'humidité dans la plage idéale (40-60%)
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Trends (Hidden by default) -->
+      <div id="trends-content" class="tab-content">
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">
+            Évolution des Données (24h)
+          </h2>
+          <p class="text-gray-600 mb-4">
+            Graphiques d'évolution des paramètres physiologiques et
+            environnementaux sur les dernières 24 heures.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div
+              class="p-4 bg-gradient-to-br from-red-50 to-pink-50 rounded-lg"
+            >
+              <h3 class="font-semibold text-gray-900 mb-2">Rythme Cardiaque</h3>
+              <p class="text-sm text-gray-600">
+                {% if physiological_trends %}
+                  Moyenne: {{ physiological.heart_rate }} bpm
+                {% else %}
+                  Aucune donnée disponible
+                {% endif %}
+              </p>
+            </div>
+            <div
+              class="p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg"
+            >
+              <h3 class="font-semibold text-gray-900 mb-2">Saturation O₂</h3>
+              <p class="text-sm text-gray-600">
+                {% if physiological_trends %}
+                  Moyenne: {{ physiological.oxygen_saturation }}%
+                {% else %}
+                  Aucune donnée disponible
+                {% endif %}
+              </p>
+            </div>
+            <div
+              class="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg"
+            >
+              <h3 class="font-semibold text-gray-900 mb-2">Qualité de l'Air</h3>
+              <p class="text-sm text-gray-600">
+                {% if environmental_trends %}
+                  Moyenne: {{ environmental.air_quality_index }} AQI
+                {% else %}
+                  Aucune donnée disponible
+                {% endif %}
+              </p>
+            </div>
+            <div
+              class="p-4 bg-gradient-to-br from-purple-50 to-violet-50 rounded-lg"
+            >
+              <h3 class="font-semibold text-gray-900 mb-2">CO₂</h3>
+              <p class="text-sm text-gray-600">
+                {% if environmental_trends %}
+                  Moyenne: {{ environmental.co2_level }} ppm
+                {% else %}
+                  Aucune donnée disponible
+                {% endif %}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Alerts (Hidden by default) -->
+      <div id="alerts-content" class="tab-content">
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">
+            Historique Complet des Alertes
+          </h2>
+          <div class="space-y-4">
+            {% for alert in all_alerts %}
+            <div class="border border-gray-200 rounded-lg p-4">
+              <div class="flex items-start gap-3">
+                <div class="{% if alert.alert_type == 'info' %}text-blue-600{% elif alert.alert_type == 'success' %}text-green-600{% elif alert.alert_type == 'warning' %}text-yellow-600{% else %}text-red-600{% endif %} mt-0.5">
+                  <i data-lucide="{% if alert.alert_type == 'info' %}info{% elif alert.alert_type == 'success' %}check-circle-2{% elif alert.alert_type == 'warning' %}alert-triangle{% else %}alert-circle{% endif %}" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between mb-2">
+                    <h3 class="font-semibold text-gray-900">{{ alert.title }}</h3>
+                    <span
+                      class="{% if alert.level == 'low' %}bg-blue-100 text-blue-700{% elif alert.level == 'medium' %}bg-yellow-100 text-yellow-700{% elif alert.level == 'high' %}bg-orange-100 text-orange-700{% else %}bg-red-100 text-red-700{% endif %} px-2 py-1 rounded text-xs font-medium"
+                      >{{ alert.get_level_display }}</span
+                    >
+                  </div>
+                  <p class="text-gray-600 text-sm mb-2">
+                    {{ alert.message }}
+                  </p>
+                  <p class="text-gray-500 text-xs">{{ alert.created_at|date:"d/m/Y H:i" }}</p>
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <p class="text-gray-500 text-center py-4">Aucune alerte</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      // Update time
+      function updateTime() {
+        const now = new Date();
+        const dateOptions = {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        };
+        document.getElementById("current-date").textContent =
+          now.toLocaleDateString("fr-FR", dateOptions);
+        document.getElementById("current-time").textContent =
+          now.toLocaleTimeString("fr-FR");
+      }
+
+      updateTime();
+      setInterval(updateTime, 1000);
+
+      // Tab switching
+      function switchTab(tabName) {
+        // Hide all tab contents
+        const contents = document.querySelectorAll(".tab-content");
+        contents.forEach((content) => content.classList.remove("active"));
+
+        // Remove active class from all buttons
+        const buttons = document.querySelectorAll(".tab-button");
+        buttons.forEach((button) => button.classList.remove("active"));
+
+        // Show selected tab content
+        document.getElementById(tabName + "-content").classList.add("active");
+
+        // Add active class to selected button
+        document.getElementById("tab-" + tabName).classList.add("active");
+
+        // Reinitialize icons after tab switch
+        lucide.createIcons();
+      }
+
+      // Simulate real-time data updates (optional)
+      function simulateDataUpdate() {
+        // You can add logic here to update values dynamically
+        // For example, updating heart rate, oxygen levels, etc.
+      }
+
+      // Update data every 5 seconds (optional)
+      setInterval(simulateDataUpdate, 5000);
+    </script>
+  </body>
+</html>
+
