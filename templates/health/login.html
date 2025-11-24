@@ -35,7 +35,7 @@
       </div>
       {% endfor %} {% endif %}
 
-      <form method="post" action="{% url 'health:login' %}">
+      <form method="post" action="{% url 'health:connexion' %}">
         {% csrf_token %}
         <div class="mb-4">
           <label
@@ -79,7 +79,7 @@
         <p>
           Pas de compte ?
           <a
-            href="{% url 'health:register' %}"
+            href="{% url 'health:inscription' %}"
             class="text-blue-600 hover:underline"
             >S'inscrire</a
           >

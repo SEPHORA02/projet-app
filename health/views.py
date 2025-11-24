@@ -1,139 +1,120 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, authenticate, logout
-from django.contrib import messages
-from django.utils import timezone
 from datetime import timedelta
-from .models import Patient, PhysiologicalData, EnvironmentalData, Alert
-from .forms import RegistrationForm
-from .forms import SimpleProfileForm
+
+from django.contrib import messages
+from django.contrib.auth import authenticate, get_user_model, login, logout, update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+from django.utils import timezone
+
+from .forms import (
+    valider_compte,
+    valider_inscription,
+    valider_mot_de_passe,
+    valider_profil_patient,
+)
+from .models import Alert, EnvironmentalData, Patient, PhysiologicalData
+from .services import (
+    ErreurRecuperationDonnees,
+    recuperer_donnees_fastapi,
+)
+
+Utilisateur = get_user_model()
 
 
-def login_view(request):
-    """Vue de connexion"""
+def _obtenir_patient(utilisateur):
+    """Garantit l'existence d'un profil patient pour l'utilisateur connecté."""
+    patient, _ = Patient.objects.get_or_create(
+        user=utilisateur,
+        defaults={
+            "age": 30,
+            "location": "Abidjan, Côte d'Ivoire",
+            "health_profile": "Profil à personnaliser",
+        },
+    )
+    return patient
+
+
+def connexion(request):
+    """Permet à un utilisateur de se connecter."""
     if request.user.is_authenticated:
-        return redirect('health:dashboard')
-    
+        return redirect('health:tableau_de_bord')
+
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('health:dashboard')
-        else:
-            messages.error(request, 'Nom d\'utilisateur ou mot de passe incorrect.')
-    
+        identifiant = request.POST.get('username')
+        mot_de_passe = request.POST.get('password')
+        utilisateur = authenticate(request, username=identifiant, password=mot_de_passe)
+        if utilisateur is not None:
+            login(request, utilisateur)
+            messages.success(request, "Connexion réussie. Bienvenue sur votre tableau de bord.")
+            return redirect('health:tableau_de_bord')
+        messages.error(request, "Identifiants incorrects. Veuillez réessayer.")
+
     return render(request, 'health/login.html')
 
 
-def register(request):
-    """Vue d'inscription des utilisateurs"""
+def inscription(request):
+    """Création de compte avec collecte des informations de base."""
     if request.user.is_authenticated:
-        return redirect('health:dashboard')
+        return redirect('health:tableau_de_bord')
+
+    donnees = {}
+    erreurs = {}
 
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            # Créer un profil Patient par défaut (age requis dans le modèle)
-            try:
-                Patient.objects.create(user=user, age=30)
-            except Exception:
-                # Si la création du profil échoue, supprimez l'utilisateur pour garder la cohérence
-                user.delete()
-                messages.error(request, 'Erreur lors de la création du profil. Réessayez.')
-                return redirect('health:register')
+        donnees, erreurs = valider_inscription(request.POST)
+        if not erreurs:
+            utilisateur = Utilisateur.objects.create_user(
+                username=donnees['username'],
+                email=donnees['email'],
+                first_name=donnees['first_name'],
+                last_name=donnees['last_name'],
+                password=donnees['password1'],
+            )
+            Patient.objects.create(
+                user=utilisateur,
+                age=donnees["age"],
+                location=donnees["location"],
+                health_profile="Profil à personnaliser",
+                phone_number=donnees["phone_number"],
+                sex=donnees["sex"],
+            )
+            login(request, utilisateur)
+            messages.success(request, "Inscription réussie. Vos alertes santé sont prêtes.")
+            return redirect('health:tableau_de_bord')
+        messages.error(request, "Merci de corriger les erreurs ci-dessous.")
 
-            login(request, user)
-            messages.success(request, 'Inscription réussie. Bienvenue !')
-            return redirect('health:dashboard')
-    else:
-        form = RegistrationForm()
-
-    return render(request, 'health/register.html', {'form': form})
+    contexte = {
+        "donnees": donnees,
+        "erreurs": erreurs,
+    }
+    return render(request, 'health/register.html', contexte)
 
 
-def logout_view(request):
-    """Déconnecte l'utilisateur et redirige vers la page de connexion"""
+def deconnexion(request):
+    """Déconnecte l'utilisateur et le renvoie vers la connexion."""
     if request.user.is_authenticated:
         logout(request)
-        messages.success(request, 'Vous avez été déconnecté avec succès.')
-    return redirect('health:login')
-
-
-def simple_profile(request):
-    """Affiche un petit formulaire demandant nom, prénom, sexe et ville"""
-    if request.method == 'POST':
-        form = SimpleProfileForm(request.POST)
-        if form.is_valid():
-            # Ici on ne crée pas d'utilisateur: on peut enregistrer ces infos
-            # dans le profil Patient si l'utilisateur est connecté.
-            if request.user.is_authenticated:
-                try:
-                    patient = request.user.patient_profile
-                except Patient.DoesNotExist:
-                    patient = Patient.objects.create(
-                        user=request.user,
-                        age=30,
-                        location=form.cleaned_data.get('city', '')
-                    )
-                # Mettre à jour le nom/prénom et la location
-                request.user.first_name = form.cleaned_data.get('first_name')
-                request.user.last_name = form.cleaned_data.get('last_name')
-                request.user.save()
-                patient.location = form.cleaned_data.get('city')
-                patient.save()
-                messages.success(request, 'Profil mis à jour.')
-                return redirect('health:dashboard')
-
-            # Si l'utilisateur n'est pas connecté, garder la donnée en session
-            request.session['simple_profile'] = form.cleaned_data
-            messages.success(request, 'Données enregistrées en session.')
-            return redirect('health:login')
-    else:
-        form = SimpleProfileForm()
-
-    return render(request, 'health/simple_profile.html', {'form': form})
+        messages.success(request, "Vous êtes déconnecté.")
+    return redirect('health:connexion')
 
 
 @login_required
-def dashboard(request):
-    """Vue principale du dashboard"""
-    # Récupérer ou créer le profil patient
-    try:
-        patient = request.user.patient_profile
-    except Patient.DoesNotExist:
-        # Créer un profil patient par défaut si il n'existe pas
-        patient = Patient.objects.create(
-            user=request.user,
-            age=45,
-            location="Paris, France",
-            health_profile="Asthme chronique - Surveillance intelligente et alertes préventives personnalisées"
-        )
-    
-    # Récupérer les dernières données physiologiques
-    latest_physiological = PhysiologicalData.objects.filter(
-        patient=patient
-    ).order_by('-recorded_at').first()
-    
-    # Si aucune donnée n'existe, créer des données par défaut
-    if not latest_physiological:
-        latest_physiological = PhysiologicalData.objects.create(
+def tableau_de_bord(request):
+    """Vue principale pour suivre ses données et alertes."""
+    patient = _obtenir_patient(request.user)
+
+    donnees_physio = PhysiologicalData.objects.filter(patient=patient).order_by('-recorded_at').first()
+    if not donnees_physio:
+        donnees_physio = PhysiologicalData.objects.create(
             patient=patient,
             heart_rate=72,
             oxygen_saturation=98.0,
-            temperature=36.8
+            temperature=36.8,
         )
-    
-    # Récupérer les dernières données environnementales
-    latest_environmental = EnvironmentalData.objects.filter(
-        patient=patient
-    ).order_by('-recorded_at').first()
-    
-    # Si aucune donnée n'existe, créer des données par défaut
-    if not latest_environmental:
-        latest_environmental = EnvironmentalData.objects.create(
+
+    donnees_env = EnvironmentalData.objects.filter(patient=patient).order_by('-recorded_at').first()
+    if not donnees_env:
+        donnees_env = EnvironmentalData.objects.create(
             patient=patient,
             air_quality_index=42,
             co2_level=420,
@@ -141,70 +122,103 @@ def dashboard(request):
             pm25=12,
             co_level=0.3,
             no2_level=18,
-            o3_level=35
+            o3_level=35,
         )
-    
-    # Récupérer les alertes récentes (non lues)
-    recent_alerts = Alert.objects.filter(
-        patient=patient,
-        is_read=False
-    ).order_by('-created_at')[:5]
-    
-    # Récupérer toutes les alertes pour l'onglet alertes
-    all_alerts = Alert.objects.filter(
-        patient=patient
-    ).order_by('-created_at')[:10]
-    
-    # Récupérer les données des dernières 24h pour les tendances
-    last_24h = timezone.now() - timedelta(hours=24)
-    physiological_trends = PhysiologicalData.objects.filter(
-        patient=patient,
-        recorded_at__gte=last_24h
+
+    alertes_recentes = Alert.objects.filter(patient=patient, is_read=False).order_by('-created_at')[:5]
+    toutes_alertes = Alert.objects.filter(patient=patient).order_by('-created_at')[:10]
+
+    dernier_jour = timezone.now() - timedelta(hours=24)
+    tendances_physio = PhysiologicalData.objects.filter(
+        patient=patient, recorded_at__gte=dernier_jour
     ).order_by('recorded_at')
-    
-    environmental_trends = EnvironmentalData.objects.filter(
-        patient=patient,
-        recorded_at__gte=last_24h
+    tendances_env = EnvironmentalData.objects.filter(
+        patient=patient, recorded_at__gte=dernier_jour
     ).order_by('recorded_at')
-    
-    context = {
-        'patient': patient,
-        'physiological': latest_physiological,
-        'environmental': latest_environmental,
-        'recent_alerts': recent_alerts,
-        'all_alerts': all_alerts,
-        'physiological_trends': physiological_trends,
-        'environmental_trends': environmental_trends,
+
+    donnees_api = None
+    erreur_api = None
+    try:
+        donnees_api = recuperer_donnees_fastapi(patient)
+    except ErreurRecuperationDonnees as exc:
+        erreur_api = str(exc)
+
+    contexte = {
+        "patient": patient,
+        "donnees_physiologiques": donnees_physio,
+        "donnees_environnementales": donnees_env,
+        "alertes_recentes": alertes_recentes,
+        "toutes_alertes": toutes_alertes,
+        "tendances_physio": tendances_physio,
+        "tendances_env": tendances_env,
+        "donnees_externes": donnees_api,
+        "erreur_donnees_externes": erreur_api,
     }
-    
-    return render(request, 'health/dashboard.html', context)
+    return render(request, 'health/dashboard.html', contexte)
 
 
 @login_required
-def environment_view(request):
-    """Vue détaillée de l'environnement"""
-    try:
-        patient = request.user.patient_profile
-    except Patient.DoesNotExist:
-        return redirect('health:dashboard')
-    
-    latest_environmental = EnvironmentalData.objects.filter(
-        patient=patient
-    ).order_by('-recorded_at').first()
-    
-    if not latest_environmental:
-        latest_environmental = EnvironmentalData.objects.create(
-            patient=patient,
-            air_quality_index=42,
-            co2_level=420,
-            humidity=55,
-            pm25=12
-        )
-    
-    context = {
-        'patient': patient,
-        'environmental': latest_environmental,
+def modifier_compte(request):
+    """Permet de modifier ses informations personnelles et médicales."""
+    patient = _obtenir_patient(request.user)
+    erreurs_compte = {}
+    erreurs_profil = {}
+    donnees_compte = {
+        'first_name': request.user.first_name or '',
+        'last_name': request.user.last_name or '',
+        'email': request.user.email or '',
+        'username': request.user.username or '',
     }
-    
-    return render(request, 'health/environment.html', context)
+    donnees_profil = {
+        'age': patient.age,
+        'location': patient.location,
+        'health_profile': patient.health_profile,
+        'phone_number': patient.phone_number or '',
+        'sex': patient.sex or '',
+    }
+
+    if request.method == 'POST':
+        donnees_compte, erreurs_compte = valider_compte(request.user, request.POST)
+        donnees_profil, erreurs_profil = valider_profil_patient(request.POST)
+        if not erreurs_compte and not erreurs_profil:
+            request.user.first_name = donnees_compte['first_name']
+            request.user.last_name = donnees_compte['last_name']
+            request.user.email = donnees_compte['email']
+            request.user.username = donnees_compte['username']
+            request.user.save()
+
+            patient.age = donnees_profil['age']
+            patient.location = donnees_profil['location']
+            patient.health_profile = donnees_profil['health_profile']
+            patient.phone_number = donnees_profil['phone_number']
+            patient.sex = donnees_profil['sex']
+            patient.save()
+            messages.success(request, "Votre compte a été mis à jour.")
+            return redirect('health:tableau_de_bord')
+        messages.error(request, "Merci de vérifier les informations saisies.")
+
+    contexte = {
+        "donnees_compte": donnees_compte,
+        "erreurs_compte": erreurs_compte,
+        "donnees_profil": donnees_profil,
+        "erreurs_profil": erreurs_profil,
+    }
+    return render(request, 'health/account_edit.html', contexte)
+
+
+@login_required
+def modifier_mot_de_passe(request):
+    """Vue permettant de changer son mot de passe."""
+    erreurs = {}
+    if request.method == 'POST':
+        donnees, erreurs = valider_mot_de_passe(request.user, request.POST)
+        if not erreurs:
+            request.user.set_password(donnees['new_password1'])
+            request.user.save()
+            update_session_auth_hash(request, request.user)
+            messages.success(request, "Mot de passe mis à jour.")
+            return redirect('health:tableau_de_bord')
+        messages.error(request, "Veuillez corriger les erreurs de saisie.")
+
+    return render(request, 'health/password_update.html', {"erreurs": erreurs})
 
