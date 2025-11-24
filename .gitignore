@@ -7,9 +7,9 @@ __pycache__/
 dist/
 build/
 /README_DJANGO.md
-./run.sh
-./setup.sh
-./stop.sh 
+
+# Scripts shell
+*.sh 
 
 # Django
 *.log

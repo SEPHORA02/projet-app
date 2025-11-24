@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
 from .models import Patient, PhysiologicalData, EnvironmentalData, Alert
+from .forms import RegistrationForm
+from .forms import SimpleProfileForm
 
 
 def login_view(request):
@@ -23,6 +25,76 @@ def login_view(request):
             messages.error(request, 'Nom d\'utilisateur ou mot de passe incorrect.')
     
     return render(request, 'health/login.html')
+
+
+def register(request):
+    """Vue d'inscription des utilisateurs"""
+    if request.user.is_authenticated:
+        return redirect('health:dashboard')
+
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Créer un profil Patient par défaut (age requis dans le modèle)
+            try:
+                Patient.objects.create(user=user, age=30)
+            except Exception:
+                # Si la création du profil échoue, supprimez l'utilisateur pour garder la cohérence
+                user.delete()
+                messages.error(request, 'Erreur lors de la création du profil. Réessayez.')
+                return redirect('health:register')
+
+            login(request, user)
+            messages.success(request, 'Inscription réussie. Bienvenue !')
+            return redirect('health:dashboard')
+    else:
+        form = RegistrationForm()
+
+    return render(request, 'health/register.html', {'form': form})
+
+
+def logout_view(request):
+    """Déconnecte l'utilisateur et redirige vers la page de connexion"""
+    if request.user.is_authenticated:
+        logout(request)
+        messages.success(request, 'Vous avez été déconnecté avec succès.')
+    return redirect('health:login')
+
+
+def simple_profile(request):
+    """Affiche un petit formulaire demandant nom, prénom, sexe et ville"""
+    if request.method == 'POST':
+        form = SimpleProfileForm(request.POST)
+        if form.is_valid():
+            # Ici on ne crée pas d'utilisateur: on peut enregistrer ces infos
+            # dans le profil Patient si l'utilisateur est connecté.
+            if request.user.is_authenticated:
+                try:
+                    patient = request.user.patient_profile
+                except Patient.DoesNotExist:
+                    patient = Patient.objects.create(
+                        user=request.user,
+                        age=30,
+                        location=form.cleaned_data.get('city', '')
+                    )
+                # Mettre à jour le nom/prénom et la location
+                request.user.first_name = form.cleaned_data.get('first_name')
+                request.user.last_name = form.cleaned_data.get('last_name')
+                request.user.save()
+                patient.location = form.cleaned_data.get('city')
+                patient.save()
+                messages.success(request, 'Profil mis à jour.')
+                return redirect('health:dashboard')
+
+            # Si l'utilisateur n'est pas connecté, garder la donnée en session
+            request.session['simple_profile'] = form.cleaned_data
+            messages.success(request, 'Données enregistrées en session.')
+            return redirect('health:login')
+    else:
+        form = SimpleProfileForm()
+
+    return render(request, 'health/simple_profile.html', {'form': form})
 
 
 @login_required
