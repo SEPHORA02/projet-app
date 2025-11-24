@@ -74,8 +74,14 @@
               <p class="text-gray-600 text-sm" id="current-time"></p>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-sm text-gray-600">{{ user.get_full_name|default:user.username }}</span>
-              <a href="{% url 'admin:logout' %}" class="text-sm text-blue-600 hover:underline">Déconnexion</a>
+              <span class="text-sm text-gray-600"
+                >{{ user.get_full_name|default:user.username }}</span
+              >
+              <a
+                href="{% url 'health:logout' %}"
+                class="text-sm text-blue-600 hover:underline"
+                >Déconnexion</a
+              >
             </div>
           </div>
         </div>
@@ -193,7 +199,9 @@
                 </div>
               </div>
               <div class="flex items-baseline gap-2 mb-4">
-                <span class="text-4xl font-bold text-gray-900">{{ physiological.heart_rate }}</span>
+                <span class="text-4xl font-bold text-gray-900"
+                  >{{ physiological.heart_rate }}</span
+                >
                 <span class="text-xl text-gray-600">bpm</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
@@ -226,7 +234,9 @@
                 </div>
               </div>
               <div class="flex items-baseline gap-2 mb-4">
-                <span class="text-4xl font-bold text-gray-900">{{ physiological.oxygen_saturation }}</span>
+                <span class="text-4xl font-bold text-gray-900"
+                  >{{ physiological.oxygen_saturation }}</span
+                >
                 <span class="text-xl text-gray-600">%</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
@@ -259,7 +269,9 @@
                 </div>
               </div>
               <div class="flex items-baseline gap-2 mb-4">
-                <span class="text-4xl font-bold text-gray-900">{{ physiological.temperature }}</span>
+                <span class="text-4xl font-bold text-gray-900"
+                  >{{ physiological.temperature }}</span
+                >
                 <span class="text-xl text-gray-600">°C</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
@@ -300,7 +312,9 @@
                 </div>
               </div>
               <div class="flex items-baseline gap-2 mb-3">
-                <span class="text-3xl font-bold text-gray-900">{{ environmental.air_quality_index }}</span>
+                <span class="text-3xl font-bold text-gray-900"
+                  >{{ environmental.air_quality_index }}</span
+                >
                 <span class="text-lg text-gray-600">AQI</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
@@ -326,7 +340,9 @@
                 </div>
               </div>
               <div class="flex items-baseline gap-2 mb-3">
-                <span class="text-3xl font-bold text-gray-900">{{ environmental.co2_level }}</span>
+                <span class="text-3xl font-bold text-gray-900"
+                  >{{ environmental.co2_level }}</span
+                >
                 <span class="text-lg text-gray-600">ppm</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
@@ -352,7 +368,9 @@
                 </div>
               </div>
               <div class="flex items-baseline gap-2 mb-3">
-                <span class="text-3xl font-bold text-gray-900">{{ environmental.humidity }}</span>
+                <span class="text-3xl font-bold text-gray-900"
+                  >{{ environmental.humidity }}</span
+                >
                 <span class="text-lg text-gray-600">%</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
@@ -378,7 +396,9 @@
                 </div>
               </div>
               <div class="flex items-baseline gap-2 mb-3">
-                <span class="text-3xl font-bold text-gray-900">{{ environmental.pm25 }}</span>
+                <span class="text-3xl font-bold text-gray-900"
+                  >{{ environmental.pm25 }}</span
+                >
                 <span class="text-lg text-gray-600">µg/m³</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
@@ -403,28 +423,36 @@
             </h2>
             <span
               class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"
-              >{{ recent_alerts|length }} nouvelle{{ recent_alerts|length|pluralize }}</span
+              >{{ recent_alerts|length }} nouvelle{{
+              recent_alerts|length|pluralize }}</span
             >
           </div>
           <div class="space-y-4">
             {% for alert in recent_alerts %}
             <div class="border border-gray-200 rounded-lg p-4">
               <div class="flex items-start gap-3">
-                <div class="{% if alert.alert_type == 'info' %}text-blue-600{% elif alert.alert_type == 'success' %}text-green-600{% elif alert.alert_type == 'warning' %}text-yellow-600{% else %}text-red-600{% endif %} mt-0.5">
-                  <i data-lucide="{% if alert.alert_type == 'info' %}info{% elif alert.alert_type == 'success' %}check-circle-2{% elif alert.alert_type == 'warning' %}alert-triangle{% else %}alert-circle{% endif %}" class="w-5 h-5"></i>
+                <div
+                  class="{% if alert.alert_type == 'info' %}text-blue-600{% elif alert.alert_type == 'success' %}text-green-600{% elif alert.alert_type == 'warning' %}text-yellow-600{% else %}text-red-600{% endif %} mt-0.5"
+                >
+                  <i
+                    data-lucide="{% if alert.alert_type == 'info' %}info{% elif alert.alert_type == 'success' %}check-circle-2{% elif alert.alert_type == 'warning' %}alert-triangle{% else %}alert-circle{% endif %}"
+                    class="w-5 h-5"
+                  ></i>
                 </div>
                 <div class="flex-1">
                   <div class="flex items-center justify-between mb-2">
-                    <h3 class="font-semibold text-gray-900">{{ alert.title }}</h3>
+                    <h3 class="font-semibold text-gray-900">
+                      {{ alert.title }}
+                    </h3>
                     <span
                       class="{% if alert.level == 'low' %}bg-blue-100 text-blue-700{% elif alert.level == 'medium' %}bg-yellow-100 text-yellow-700{% elif alert.level == 'high' %}bg-orange-100 text-orange-700{% else %}bg-red-100 text-red-700{% endif %} px-2 py-1 rounded text-xs font-medium"
                       >{{ alert.get_level_display }}</span
                     >
                   </div>
-                  <p class="text-gray-600 text-sm mb-2">
-                    {{ alert.message }}
+                  <p class="text-gray-600 text-sm mb-2">{{ alert.message }}</p>
+                  <p class="text-gray-500 text-xs">
+                    {{ alert.created_at|timesince }} ago
                   </p>
-                  <p class="text-gray-500 text-xs">{{ alert.created_at|timesince }} ago</p>
                 </div>
               </div>
             </div>
@@ -447,7 +475,9 @@
                 class="flex justify-between items-center p-4 bg-green-50 rounded-lg"
               >
                 <span class="text-gray-700 font-medium">Indice AQI</span>
-                <span class="text-green-700 font-semibold">{{ environmental.air_quality_index }} - Bon</span>
+                <span class="text-green-700 font-semibold"
+                  >{{ environmental.air_quality_index }} - Bon</span
+                >
               </div>
               <div
                 class="flex justify-between items-center p-4 bg-blue-50 rounded-lg"
@@ -455,7 +485,9 @@
                 <span class="text-gray-700 font-medium"
                   >CO (Monoxyde de carbone)</span
                 >
-                <span class="text-blue-700 font-semibold">{{ environmental.co_level }} ppm</span>
+                <span class="text-blue-700 font-semibold"
+                  >{{ environmental.co_level }} ppm</span
+                >
               </div>
               <div
                 class="flex justify-between items-center p-4 bg-yellow-50 rounded-lg"
@@ -463,13 +495,17 @@
                 <span class="text-gray-700 font-medium"
                   >NO₂ (Dioxyde d'azote)</span
                 >
-                <span class="text-yellow-700 font-semibold">{{ environmental.no2_level }} ppb</span>
+                <span class="text-yellow-700 font-semibold"
+                  >{{ environmental.no2_level }} ppb</span
+                >
               </div>
               <div
                 class="flex justify-between items-center p-4 bg-green-50 rounded-lg"
               >
                 <span class="text-gray-700 font-medium">O₃ (Ozone)</span>
-                <span class="text-green-700 font-semibold">{{ environmental.o3_level }} ppb</span>
+                <span class="text-green-700 font-semibold"
+                  >{{ environmental.o3_level }} ppb</span
+                >
               </div>
             </div>
           </div>
@@ -535,11 +571,9 @@
             >
               <h3 class="font-semibold text-gray-900 mb-2">Rythme Cardiaque</h3>
               <p class="text-sm text-gray-600">
-                {% if physiological_trends %}
-                  Moyenne: {{ physiological.heart_rate }} bpm
-                {% else %}
-                  Aucune donnée disponible
-                {% endif %}
+                {% if physiological_trends %} Moyenne: {{
+                physiological.heart_rate }} bpm {% else %} Aucune donnée
+                disponible {% endif %}
               </p>
             </div>
             <div
@@ -547,11 +581,9 @@
             >
               <h3 class="font-semibold text-gray-900 mb-2">Saturation O₂</h3>
               <p class="text-sm text-gray-600">
-                {% if physiological_trends %}
-                  Moyenne: {{ physiological.oxygen_saturation }}%
-                {% else %}
-                  Aucune donnée disponible
-                {% endif %}
+                {% if physiological_trends %} Moyenne: {{
+                physiological.oxygen_saturation }}% {% else %} Aucune donnée
+                disponible {% endif %}
               </p>
             </div>
             <div
@@ -559,11 +591,9 @@
             >
               <h3 class="font-semibold text-gray-900 mb-2">Qualité de l'Air</h3>
               <p class="text-sm text-gray-600">
-                {% if environmental_trends %}
-                  Moyenne: {{ environmental.air_quality_index }} AQI
-                {% else %}
-                  Aucune donnée disponible
-                {% endif %}
+                {% if environmental_trends %} Moyenne: {{
+                environmental.air_quality_index }} AQI {% else %} Aucune donnée
+                disponible {% endif %}
               </p>
             </div>
             <div
@@ -571,11 +601,9 @@
             >
               <h3 class="font-semibold text-gray-900 mb-2">CO₂</h3>
               <p class="text-sm text-gray-600">
-                {% if environmental_trends %}
-                  Moyenne: {{ environmental.co2_level }} ppm
-                {% else %}
-                  Aucune donnée disponible
-                {% endif %}
+                {% if environmental_trends %} Moyenne: {{
+                environmental.co2_level }} ppm {% else %} Aucune donnée
+                disponible {% endif %}
               </p>
             </div>
           </div>
@@ -592,21 +620,28 @@
             {% for alert in all_alerts %}
             <div class="border border-gray-200 rounded-lg p-4">
               <div class="flex items-start gap-3">
-                <div class="{% if alert.alert_type == 'info' %}text-blue-600{% elif alert.alert_type == 'success' %}text-green-600{% elif alert.alert_type == 'warning' %}text-yellow-600{% else %}text-red-600{% endif %} mt-0.5">
-                  <i data-lucide="{% if alert.alert_type == 'info' %}info{% elif alert.alert_type == 'success' %}check-circle-2{% elif alert.alert_type == 'warning' %}alert-triangle{% else %}alert-circle{% endif %}" class="w-5 h-5"></i>
+                <div
+                  class="{% if alert.alert_type == 'info' %}text-blue-600{% elif alert.alert_type == 'success' %}text-green-600{% elif alert.alert_type == 'warning' %}text-yellow-600{% else %}text-red-600{% endif %} mt-0.5"
+                >
+                  <i
+                    data-lucide="{% if alert.alert_type == 'info' %}info{% elif alert.alert_type == 'success' %}check-circle-2{% elif alert.alert_type == 'warning' %}alert-triangle{% else %}alert-circle{% endif %}"
+                    class="w-5 h-5"
+                  ></i>
                 </div>
                 <div class="flex-1">
                   <div class="flex items-center justify-between mb-2">
-                    <h3 class="font-semibold text-gray-900">{{ alert.title }}</h3>
+                    <h3 class="font-semibold text-gray-900">
+                      {{ alert.title }}
+                    </h3>
                     <span
                       class="{% if alert.level == 'low' %}bg-blue-100 text-blue-700{% elif alert.level == 'medium' %}bg-yellow-100 text-yellow-700{% elif alert.level == 'high' %}bg-orange-100 text-orange-700{% else %}bg-red-100 text-red-700{% endif %} px-2 py-1 rounded text-xs font-medium"
                       >{{ alert.get_level_display }}</span
                     >
                   </div>
-                  <p class="text-gray-600 text-sm mb-2">
-                    {{ alert.message }}
+                  <p class="text-gray-600 text-sm mb-2">{{ alert.message }}</p>
+                  <p class="text-gray-500 text-xs">
+                    {{ alert.created_at|date:"d/m/Y H:i" }}
                   </p>
-                  <p class="text-gray-500 text-xs">{{ alert.created_at|date:"d/m/Y H:i" }}</p>
                 </div>
               </div>
             </div>
@@ -671,4 +706,3 @@
     </script>
   </body>
 </html>
-

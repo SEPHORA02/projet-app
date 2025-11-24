@@ -77,6 +77,14 @@
 
       <div class="mt-6 text-center text-sm text-gray-600">
         <p>
+          Pas de compte ?
+          <a
+            href="{% url 'health:register' %}"
+            class="text-blue-600 hover:underline"
+            >S'inscrire</a
+          >
+        </p>
+        <p class="mt-2">
           Accès administrateur:
           <a
             href="{% url 'admin:index' %}"
