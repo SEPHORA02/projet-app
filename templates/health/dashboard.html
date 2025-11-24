@@ -202,6 +202,41 @@
           </div>
         </div>
 
+        {% if analyse_risque %}
+        <div class="bg-white border border-red-100 rounded-xl shadow-sm p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <p class="text-sm uppercase text-gray-500">Analyse IA</p>
+              <h2 class="text-xl font-semibold text-gray-900">
+                {{ analyse_risque.resume }}
+              </h2>
+            </div>
+            {% if analyse_risque.risque %}
+            <span
+              class="px-3 py-1 rounded-full bg-red-50 text-red-700 text-sm font-medium"
+              >Score {{ analyse_risque.score }}/5</span
+            >
+            {% else %}
+            <span
+              class="px-3 py-1 rounded-full bg-green-50 text-green-700 text-sm font-medium"
+              >Score {{ analyse_risque.score }}/5</span
+            >
+            {% endif %}
+          </div>
+          {% if analyse_risque.facteurs %}
+          <ul class="list-disc pl-5 text-sm text-gray-700 space-y-1">
+            {% for facteur in analyse_risque.facteurs %}
+            <li>{{ facteur }}</li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="text-sm text-gray-600">
+            Aucune anomalie relevée sur les données reçues.
+          </p>
+          {% endif %}
+        </div>
+        {% endif %}
+
         <!-- Health Metrics -->
         <div>
           <h2 class="text-xl font-semibold text-gray-900 mb-4">

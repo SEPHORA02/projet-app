@@ -15,6 +15,7 @@ from .forms import (
 from .models import Alert, EnvironmentalData, Patient, PhysiologicalData
 from .services import (
     ErreurRecuperationDonnees,
+    analyser_risque_asthme,
     recuperer_donnees_fastapi,
 )
 
@@ -138,8 +139,25 @@ def tableau_de_bord(request):
 
     donnees_api = None
     erreur_api = None
+    analyse_risque = None
     try:
         donnees_api = recuperer_donnees_fastapi(patient)
+        analyse_risque = analyser_risque_asthme(donnees_api)
+        if analyse_risque["risque"]:
+            recents = Alert.objects.filter(
+                patient=patient,
+                title__icontains="Risque de crise d'asthme",
+                created_at__gte=timezone.now() - timedelta(hours=1),
+            ).exists()
+            if not recents:
+                Alert.objects.create(
+                    patient=patient,
+                    title="Risque de crise d'asthme détecté",
+                    message="Les données externes indiquent un risque potentiel: "
+                    + "; ".join(analyse_risque["facteurs"]),
+                    alert_type='warning',
+                    level='high',
+                )
     except ErreurRecuperationDonnees as exc:
         erreur_api = str(exc)
 
@@ -153,6 +171,7 @@ def tableau_de_bord(request):
         "tendances_env": tendances_env,
         "donnees_externes": donnees_api,
         "erreur_donnees_externes": erreur_api,
+        "analyse_risque": analyse_risque,
     }
     return render(request, 'health/dashboard.html', contexte)
 
