@@ -14,9 +14,9 @@
     </style>
   </head>
   <body
-    class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center"
+    class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center p-4"
   >
-    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-2xl">
       <div class="text-center mb-8">
         <div
           class="w-16 h-16 bg-gradient-to-br from-blue-500 to-green-500 rounded-xl flex items-center justify-center mx-auto mb-4"
@@ -24,10 +24,10 @@
           <i data-lucide="user-plus" class="w-8 h-8 text-white"></i>
         </div>
         <h1 class="text-3xl font-bold text-gray-900 mb-2">
-          Inscription - E-Santé 4.0
+          Créez votre compte E-Santé
         </h1>
         <p class="text-gray-600">
-          Créez votre compte pour commencer la surveillance
+          Renseignez vos informations pour accéder à votre tableau de bord santé.
         </p>
       </div>
 
@@ -39,56 +39,160 @@
       </div>
       {% endfor %}{% endif %}
 
-      <form method="post" action="{% url 'health:register' %}">
+      <form method="post" action="{% url 'health:inscription' %}">
         {% csrf_token %}
-        <div class="grid grid-cols-1 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2"
-              >Nom d'utilisateur</label
+              >Identifiant</label
             >
-            {{ form.username|as_widget(attrs={'class':'w-full px-4 py-3 border
-            border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500
-            focus:border-transparent'}) }}
+            <input
+              type="text"
+              name="username"
+              value="{{ donnees.username|default:'' }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+            {% if erreurs.username %}
+            <p class="text-sm text-red-600 mt-1">{{ erreurs.username }}</p>
+            {% endif %}
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2"
-              >Email</label
+              >Adresse e-mail</label
             >
-            {{ form.email|as_widget(attrs={'class':'w-full px-4 py-3 border
-            border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500
-            focus:border-transparent'}) }}
+            <input
+              type="email"
+              name="email"
+              value="{{ donnees.email|default:'' }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+            {% if erreurs.email %}
+            <p class="text-sm text-red-600 mt-1">{{ erreurs.email }}</p>
+            {% endif %}
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2"
               >Prénom</label
             >
-            {{ form.first_name|as_widget(attrs={'class':'w-full px-4 py-3 border
-            border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500
-            focus:border-transparent'}) }}
+            <input
+              type="text"
+              name="first_name"
+              value="{{ donnees.first_name|default:'' }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+            {% if erreurs.first_name %}
+            <p class="text-sm text-red-600 mt-1">{{ erreurs.first_name }}</p>
+            {% endif %}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+            <input
+              type="text"
+              name="last_name"
+              value="{{ donnees.last_name|default:'' }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+            {% if erreurs.last_name %}
+            <p class="text-sm text-red-600 mt-1">{{ erreurs.last_name }}</p>
+            {% endif %}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Sexe</label>
+            <select
+              name="sex"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+              required
+            >
+              <option value="">Choisir…</option>
+              <option value="H" {% if donnees.sex == 'H' %}selected{% endif %}>
+                Homme
+              </option>
+              <option value="F" {% if donnees.sex == 'F' %}selected{% endif %}>
+                Femme
+              </option>
+              <option value="A" {% if donnees.sex == 'A' %}selected{% endif %}>
+                Autre
+              </option>
+            </select>
+            {% if erreurs.sex %}
+            <p class="text-sm text-red-600 mt-1">{{ erreurs.sex }}</p>
+            {% endif %}
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2"
-              >Nom</label
+              >Numéro de téléphone</label
             >
-            {{ form.last_name|as_widget(attrs={'class':'w-full px-4 py-3 border
-            border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500
-            focus:border-transparent'}) }}
+            <input
+              type="text"
+              name="phone_number"
+              value="{{ donnees.phone_number|default:'' }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+            {% if erreurs.phone_number %}
+            <p class="text-sm text-red-600 mt-1">{{ erreurs.phone_number }}</p>
+            {% endif %}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Âge</label>
+            <input
+              type="number"
+              name="age"
+              min="1"
+              value="{{ donnees.age|default:'' }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+            {% if erreurs.age %}
+            <p class="text-sm text-red-600 mt-1">{{ erreurs.age }}</p>
+            {% endif %}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Ville / Localisation</label
+            >
+            <input
+              type="text"
+              name="location"
+              value="{{ donnees.location|default:'' }}"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+            {% if erreurs.location %}
+            <p class="text-sm text-red-600 mt-1">{{ erreurs.location }}</p>
+            {% endif %}
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2"
               >Mot de passe</label
             >
-            {{ form.password1|as_widget(attrs={'class':'w-full px-4 py-3 border
-            border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500
-            focus:border-transparent'}) }}
+            <input
+              type="password"
+              name="password1"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+            {% if erreurs.password1 %}
+            <p class="text-sm text-red-600 mt-1">{{ erreurs.password1 }}</p>
+            {% endif %}
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2"
               >Confirmer le mot de passe</label
             >
-            {{ form.password2|as_widget(attrs={'class':'w-full px-4 py-3 border
-            border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500
-            focus:border-transparent'}) }}
+            <input
+              type="password"
+              name="password2"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+            {% if erreurs.password2 %}
+            <p class="text-sm text-red-600 mt-1">{{ erreurs.password2 }}</p>
+            {% endif %}
           </div>
         </div>
 
@@ -96,136 +200,23 @@
           type="submit"
           class="mt-6 w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
         >
-          <!DOCTYPE html>
-          <html lang="fr">
-            <head>
-              <meta charset="UTF-8" />
-              <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1.0"
-              />
-              <title>E-Santé 4.0 - Inscription</title>
-              <script src="https://cdn.tailwindcss.com"></script>
-              <script src="https://unpkg.com/lucide@latest"></script>
-              <style>
-                @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-                body {
-                  font-family: "Inter", sans-serif;
-                }
-              </style>
-            </head>
-            <body
-              class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center"
-            >
-              <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
-                <div class="text-center mb-8">
-                  <div
-                    class="w-16 h-16 bg-gradient-to-br from-blue-500 to-green-500 rounded-xl flex items-center justify-center mx-auto mb-4"
-                  >
-                    <i data-lucide="user-plus" class="w-8 h-8 text-white"></i>
-                  </div>
-                  <h1 class="text-3xl font-bold text-gray-900 mb-2">
-                    Inscription - E-Santé 4.0
-                  </h1>
-                  <p class="text-gray-600">
-                    Créez votre compte pour commencer la surveillance
-                  </p>
-                </div>
-
-                {% if messages %}{% for message in messages %}
-                <div
-                  class="mb-4 p-3 rounded-lg {% if message.tags == 'error' %}bg-red-50 text-red-700{% else %}bg-blue-50 text-blue-700{% endif %}"
-                >
-                  {{ message }}
-                </div>
-                {% endfor %}{% endif %}
-
-                <form method="post" action="{% url 'health:register' %}">
-                  {% csrf_token %}
-                  <div class="grid grid-cols-1 gap-4">
-                    <div>
-                      <label
-                        class="block text-sm font-medium text-gray-700 mb-2"
-                        >Nom d'utilisateur</label
-                      >
-                      {{ form.username.as_widget(attrs={'class':'w-full px-4
-                      py-3 border border-gray-300 rounded-lg focus:ring-2
-                      focus:ring-blue-500 focus:border-transparent'}) }}
-                    </div>
-                    <div>
-                      <label
-                        class="block text-sm font-medium text-gray-700 mb-2"
-                        >Email</label
-                      >
-                      {{ form.email.as_widget(attrs={'class':'w-full px-4 py-3
-                      border border-gray-300 rounded-lg focus:ring-2
-                      focus:ring-blue-500 focus:border-transparent'}) }}
-                    </div>
-                    <div>
-                      <label
-                        class="block text-sm font-medium text-gray-700 mb-2"
-                        >Prénom</label
-                      >
-                      {{ form.first_name.as_widget(attrs={'class':'w-full px-4
-                      py-3 border border-gray-300 rounded-lg focus:ring-2
-                      focus:ring-blue-500 focus:border-transparent'}) }}
-                    </div>
-                    <div>
-                      <label
-                        class="block text-sm font-medium text-gray-700 mb-2"
-                        >Nom</label
-                      >
-                      {{ form.last_name.as_widget(attrs={'class':'w-full px-4
-                      py-3 border border-gray-300 rounded-lg focus:ring-2
-                      focus:ring-blue-500 focus:border-transparent'}) }}
-                    </div>
-                    <div>
-                      <label
-                        class="block text-sm font-medium text-gray-700 mb-2"
-                        >Mot de passe</label
-                      >
-                      {{ form.password1.as_widget(attrs={'class':'w-full px-4
-                      py-3 border border-gray-300 rounded-lg focus:ring-2
-                      focus:ring-blue-500 focus:border-transparent'}) }}
-                    </div>
-                    <div>
-                      <label
-                        class="block text-sm font-medium text-gray-700 mb-2"
-                        >Confirmer le mot de passe</label
-                      >
-                      {{ form.password2.as_widget(attrs={'class':'w-full px-4
-                      py-3 border border-gray-300 rounded-lg focus:ring-2
-                      focus:ring-blue-500 focus:border-transparent'}) }}
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    class="mt-6 w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
-                  >
-                    S'inscrire
-                  </button>
-                </form>
-
-                <div class="mt-6 text-center text-sm text-gray-600">
-                  <p>
-                    Vous avez déjà un compte ?
-                    <a
-                      href="{% url 'health:login' %}"
-                      class="text-blue-600 hover:underline"
-                      >Se connecter</a
-                    >
-                  </p>
-                </div>
-              </div>
-
-              <script>
-                lucide.createIcons();
-              </script>
-            </body>
-          </html>
+          Valider mon inscription
         </button>
       </form>
+
+      <div class="mt-6 text-center text-sm text-gray-600">
+        <p>
+          Déjà inscrit ?
+          <a href="{% url 'health:connexion' %}" class="text-blue-600 hover:underline"
+            >Je me connecte</a
+          >
+        </p>
+      </div>
     </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
   </body>
 </html>
+

@@ -77,11 +77,23 @@
               <span class="text-sm text-gray-600"
                 >{{ user.get_full_name|default:user.username }}</span
               >
-              <a
-                href="{% url 'health:logout' %}"
-                class="text-sm text-blue-600 hover:underline"
-                >Déconnexion</a
-              >
+              <div class="flex items-center gap-3">
+                <a
+                  href="{% url 'health:modifier_compte' %}"
+                  class="text-sm text-gray-600 hover:text-blue-600"
+                  >Modifier mes infos</a
+                >
+                <a
+                  href="{% url 'health:modifier_mot_de_passe' %}"
+                  class="text-sm text-gray-600 hover:text-blue-600"
+                  >Mot de passe</a
+                >
+                <a
+                  href="{% url 'health:deconnexion' %}"
+                  class="text-sm text-blue-600 hover:underline"
+                  >Déconnexion</a
+                >
+              </div>
             </div>
           </div>
         </div>
@@ -157,7 +169,7 @@
                 {% endif %}
               </div>
               <div
-                class="grid grid-cols-1 md:grid-cols-3 gap-4 text-gray-600 mb-3"
+                class="grid grid-cols-1 md:grid-cols-4 gap-4 text-gray-600 mb-3"
               >
                 <div class="flex items-center gap-2">
                   <i data-lucide="calendar" class="w-4 h-4"></i>
@@ -165,18 +177,26 @@
                 </div>
                 <div class="flex items-center gap-2">
                   <i data-lucide="map-pin" class="w-4 h-4"></i>
-                  <span>{{ patient.location }}</span>
+                  <span>{{ patient.localisation }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="user-check" class="w-4 h-4"></i>
+                  <span>Sexe: {{ patient.get_sex_display|default:"-" }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="phone" class="w-4 h-4"></i>
+                  <span>{{ patient.phone_number|default:"Numéro non renseigné" }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <i data-lucide="activity" class="w-4 h-4"></i>
-                  <span>Capteurs connectés: {{ patient.sensors_status }}</span>
+                  <span>Capteurs connectés: {{ patient.statut_capteurs }}</span>
                 </div>
               </div>
               <p class="text-gray-600 text-sm">
                 <span class="font-semibold text-gray-700"
                   >Profil de santé:</span
                 >
-                {{ patient.health_profile }}
+                {{ patient.profil_sante }}
               </p>
             </div>
           </div>
@@ -200,14 +220,14 @@
               </div>
               <div class="flex items-baseline gap-2 mb-4">
                 <span class="text-4xl font-bold text-gray-900"
-                  >{{ physiological.heart_rate }}</span
+                  >{{ donnees_physiologiques.heart_rate }}</span
                 >
                 <span class="text-xl text-gray-600">bpm</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
                 <div
                   class="bg-green-500 h-2 rounded-full progress-bar"
-                  style="width: {% widthratio physiological.heart_rate 100 1 %}%"
+                  style="width: {% widthratio donnees_physiologiques.heart_rate 100 1 %}%"
                 ></div>
               </div>
               <div class="flex items-center justify-between mb-3">
@@ -235,14 +255,14 @@
               </div>
               <div class="flex items-baseline gap-2 mb-4">
                 <span class="text-4xl font-bold text-gray-900"
-                  >{{ physiological.oxygen_saturation }}</span
+                  >{{ donnees_physiologiques.oxygen_saturation }}</span
                 >
                 <span class="text-xl text-gray-600">%</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
                 <div
                   class="bg-green-500 h-2 rounded-full progress-bar"
-                  style="width: {{ physiological.oxygen_saturation }}%"
+                  style="width: {{ donnees_physiologiques.oxygen_saturation }}%"
                 ></div>
               </div>
               <div class="flex items-center justify-between mb-3">
@@ -270,14 +290,14 @@
               </div>
               <div class="flex items-baseline gap-2 mb-4">
                 <span class="text-4xl font-bold text-gray-900"
-                  >{{ physiological.temperature }}</span
+                  >{{ donnees_physiologiques.temperature }}</span
                 >
                 <span class="text-xl text-gray-600">°C</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
                 <div
                   class="bg-green-500 h-2 rounded-full progress-bar"
-                  style="width: {% widthratio physiological.temperature 37.2 100 %}%"
+                  style="width: {% widthratio donnees_physiologiques.temperature 37.2 100 %}%"
                 ></div>
               </div>
               <div class="flex items-center justify-between mb-3">
@@ -313,14 +333,14 @@
               </div>
               <div class="flex items-baseline gap-2 mb-3">
                 <span class="text-3xl font-bold text-gray-900"
-                  >{{ environmental.air_quality_index }}</span
+                  >{{ donnees_environnementales.air_quality_index }}</span
                 >
                 <span class="text-lg text-gray-600">AQI</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
                 <div
                   class="bg-green-500 h-2 rounded-full"
-                  style="width: {% widthratio environmental.air_quality_index 100 1 %}%"
+                  style="width: {% widthratio donnees_environnementales.air_quality_index 100 1 %}%"
                 ></div>
               </div>
               <span
@@ -341,14 +361,14 @@
               </div>
               <div class="flex items-baseline gap-2 mb-3">
                 <span class="text-3xl font-bold text-gray-900"
-                  >{{ environmental.co2_level }}</span
+                  >{{ donnees_environnementales.co2_level }}</span
                 >
                 <span class="text-lg text-gray-600">ppm</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
                 <div
                   class="bg-blue-500 h-2 rounded-full"
-                  style="width: {% widthratio environmental.co2_level 1000 1 %}%"
+                  style="width: {% widthratio donnees_environnementales.co2_level 1000 1 %}%"
                 ></div>
               </div>
               <span
@@ -369,14 +389,14 @@
               </div>
               <div class="flex items-baseline gap-2 mb-3">
                 <span class="text-3xl font-bold text-gray-900"
-                  >{{ environmental.humidity }}</span
+                  >{{ donnees_environnementales.humidity }}</span
                 >
                 <span class="text-lg text-gray-600">%</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
                 <div
                   class="bg-blue-500 h-2 rounded-full"
-                  style="width: {{ environmental.humidity }}%"
+                  style="width: {{ donnees_environnementales.humidity }}%"
                 ></div>
               </div>
               <span
@@ -397,14 +417,14 @@
               </div>
               <div class="flex items-baseline gap-2 mb-3">
                 <span class="text-3xl font-bold text-gray-900"
-                  >{{ environmental.pm25 }}</span
+                  >{{ donnees_environnementales.pm25 }}</span
                 >
                 <span class="text-lg text-gray-600">µg/m³</span>
               </div>
               <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
                 <div
                   class="bg-green-500 h-2 rounded-full"
-                  style="width: {% widthratio environmental.pm25 50 1 %}%"
+                  style="width: {% widthratio donnees_environnementales.pm25 50 1 %}%"
                 ></div>
               </div>
               <span
@@ -423,12 +443,12 @@
             </h2>
             <span
               class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"
-              >{{ recent_alerts|length }} nouvelle{{
-              recent_alerts|length|pluralize }}</span
+              >{{ alertes_recentes|length }} nouvelle{{
+              alertes_recentes|length|pluralize }}</span
             >
           </div>
           <div class="space-y-4">
-            {% for alert in recent_alerts %}
+            {% for alert in alertes_recentes %}
             <div class="border border-gray-200 rounded-lg p-4">
               <div class="flex items-start gap-3">
                 <div
@@ -476,7 +496,7 @@
               >
                 <span class="text-gray-700 font-medium">Indice AQI</span>
                 <span class="text-green-700 font-semibold"
-                  >{{ environmental.air_quality_index }} - Bon</span
+                  >{{ donnees_environnementales.air_quality_index }} - Bon</span
                 >
               </div>
               <div
@@ -486,7 +506,7 @@
                   >CO (Monoxyde de carbone)</span
                 >
                 <span class="text-blue-700 font-semibold"
-                  >{{ environmental.co_level }} ppm</span
+                  >{{ donnees_environnementales.co_level }} ppm</span
                 >
               </div>
               <div
@@ -496,7 +516,7 @@
                   >NO₂ (Dioxyde d'azote)</span
                 >
                 <span class="text-yellow-700 font-semibold"
-                  >{{ environmental.no2_level }} ppb</span
+                  >{{ donnees_environnementales.no2_level }} ppb</span
                 >
               </div>
               <div
@@ -504,7 +524,7 @@
               >
                 <span class="text-gray-700 font-medium">O₃ (Ozone)</span>
                 <span class="text-green-700 font-semibold"
-                  >{{ environmental.o3_level }} ppb</span
+                  >{{ donnees_environnementales.o3_level }} ppb</span
                 >
               </div>
             </div>
@@ -553,6 +573,42 @@
             </div>
           </div>
         </div>
+
+        <!-- Données externes FastAPI -->
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-semibold text-gray-900">
+              Synchronisation temps réel
+            </h2>
+            <span class="text-sm text-gray-500"
+              >Source: API FastAPI partenaire</span
+            >
+          </div>
+          {% if donnees_externes %}
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {% for cle, valeur in donnees_externes.items %}
+            <div class="p-4 border border-gray-200 rounded-lg">
+              <p class="text-sm text-gray-500 uppercase tracking-wide">
+                {{ cle|title|cut:"_" }}
+              </p>
+              <p class="text-2xl font-semibold text-gray-900 mt-1">
+                {{ valeur }}
+              </p>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div
+            class="p-4 rounded-lg {% if erreur_donnees_externes %}bg-red-50 text-red-700{% else %}bg-gray-50 text-gray-600{% endif %}"
+          >
+            {% if erreur_donnees_externes %}
+            {{ erreur_donnees_externes }}
+            {% else %}
+            Aucune donnée externe n'est disponible pour le moment.
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
       </div>
 
       <!-- Tab Content: Trends (Hidden by default) -->
@@ -571,8 +627,8 @@
             >
               <h3 class="font-semibold text-gray-900 mb-2">Rythme Cardiaque</h3>
               <p class="text-sm text-gray-600">
-                {% if physiological_trends %} Moyenne: {{
-                physiological.heart_rate }} bpm {% else %} Aucune donnée
+                {% if tendances_physio %} Moyenne: {{
+                donnees_physiologiques.heart_rate }} bpm {% else %} Aucune donnée
                 disponible {% endif %}
               </p>
             </div>
@@ -581,8 +637,8 @@
             >
               <h3 class="font-semibold text-gray-900 mb-2">Saturation O₂</h3>
               <p class="text-sm text-gray-600">
-                {% if physiological_trends %} Moyenne: {{
-                physiological.oxygen_saturation }}% {% else %} Aucune donnée
+                {% if tendances_physio %} Moyenne: {{
+                donnees_physiologiques.oxygen_saturation }}% {% else %} Aucune donnée
                 disponible {% endif %}
               </p>
             </div>
@@ -591,8 +647,9 @@
             >
               <h3 class="font-semibold text-gray-900 mb-2">Qualité de l'Air</h3>
               <p class="text-sm text-gray-600">
-                {% if environmental_trends %} Moyenne: {{
-                environmental.air_quality_index }} AQI {% else %} Aucune donnée
+                {% if tendances_env %} Moyenne: {{
+                donnees_environnementales.air_quality_index }} AQI {% else %}
+                Aucune donnée
                 disponible {% endif %}
               </p>
             </div>
@@ -601,8 +658,9 @@
             >
               <h3 class="font-semibold text-gray-900 mb-2">CO₂</h3>
               <p class="text-sm text-gray-600">
-                {% if environmental_trends %} Moyenne: {{
-                environmental.co2_level }} ppm {% else %} Aucune donnée
+                {% if tendances_env %} Moyenne: {{
+                donnees_environnementales.co2_level }} ppm {% else %} Aucune
+                donnée
                 disponible {% endif %}
               </p>
             </div>
@@ -617,7 +675,7 @@
             Historique Complet des Alertes
           </h2>
           <div class="space-y-4">
-            {% for alert in all_alerts %}
+            {% for alert in toutes_alertes %}
             <div class="border border-gray-200 rounded-lg p-4">
               <div class="flex items-start gap-3">
                 <div

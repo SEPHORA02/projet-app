@@ -23,9 +23,18 @@ admin.site.register(User, UserAdmin)
 
 @admin.register(Patient)
 class PatientAdmin(admin.ModelAdmin):
-    list_display = ('user', 'age', 'location', 'is_active', 'sensors_status', 'created_at')
-    list_filter = ('is_active', 'created_at')
-    search_fields = ('user__username', 'user__first_name', 'user__last_name', 'location')
+    list_display = (
+        'user',
+        'age',
+        'location',
+        'sex',
+        'phone_number',
+        'is_active',
+        'sensors_status',
+        'created_at',
+    )
+    list_filter = ('is_active', 'sex', 'created_at')
+    search_fields = ('user__username', 'user__first_name', 'user__last_name', 'location', 'phone_number')
     readonly_fields = ('created_at', 'updated_at')
 
 

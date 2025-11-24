@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-Santé 4.0 - Mon compte</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-gray-50 py-10">
+    <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow p-8">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Paramètres du compte</h1>
+          <p class="text-gray-600">
+            Mettez à jour vos informations personnelles et médicales.
+          </p>
+        </div>
+        <a
+          href="{% url 'health:tableau_de_bord' %}"
+          class="text-blue-600 hover:underline"
+          >Retour au tableau de bord</a
+        >
+      </div>
+
+      {% if messages %}{% for message in messages %}
+      <div
+        class="mb-4 p-3 rounded-lg {% if message.tags == 'error' %}bg-red-50 text-red-700{% else %}bg-green-50 text-green-700{% endif %}"
+      >
+        {{ message }}
+      </div>
+      {% endfor %}{% endif %}
+
+      <form method="post" class="space-y-12">
+        {% csrf_token %}
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">
+            Informations d'identité
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Prénom</label
+              >
+              <input
+                type="text"
+                name="first_name"
+                value="{{ donnees_compte.first_name|default:'' }}"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+              {% if erreurs_compte.first_name %}
+              <p class="text-sm text-red-600 mt-1">
+                {{ erreurs_compte.first_name }}
+              </p>
+              {% endif %}
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Nom</label
+              >
+              <input
+                type="text"
+                name="last_name"
+                value="{{ donnees_compte.last_name|default:'' }}"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+              {% if erreurs_compte.last_name %}
+              <p class="text-sm text-red-600 mt-1">
+                {{ erreurs_compte.last_name }}
+              </p>
+              {% endif %}
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Adresse e-mail</label
+              >
+              <input
+                type="email"
+                name="email"
+                value="{{ donnees_compte.email|default:'' }}"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+              {% if erreurs_compte.email %}
+              <p class="text-sm text-red-600 mt-1">
+                {{ erreurs_compte.email }}
+              </p>
+              {% endif %}
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Identifiant</label
+              >
+              <input
+                type="text"
+                name="username"
+                value="{{ donnees_compte.username|default:'' }}"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+              {% if erreurs_compte.username %}
+              <p class="text-sm text-red-600 mt-1">
+                {{ erreurs_compte.username }}
+              </p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">
+            Informations santé
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Âge</label
+              >
+              <input
+                type="number"
+                name="age"
+                min="1"
+                value="{{ donnees_profil.age|default:'' }}"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+              {% if erreurs_profil.age %}
+              <p class="text-sm text-red-600 mt-1">
+                {{ erreurs_profil.age }}
+              </p>
+              {% endif %}
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Localisation</label
+              >
+              <input
+                type="text"
+                name="location"
+                value="{{ donnees_profil.location|default:'' }}"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+              {% if erreurs_profil.location %}
+              <p class="text-sm text-red-600 mt-1">
+                {{ erreurs_profil.location }}
+              </p>
+              {% endif %}
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Profil de santé</label
+              >
+              <textarea
+                name="health_profile"
+                rows="3"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >{{ donnees_profil.health_profile|default:'' }}</textarea>
+              {% if erreurs_profil.health_profile %}
+              <p class="text-sm text-red-600 mt-1">
+                {{ erreurs_profil.health_profile }}
+              </p>
+              {% endif %}
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Numéro de téléphone</label
+              >
+              <input
+                type="text"
+                name="phone_number"
+                value="{{ donnees_profil.phone_number|default:'' }}"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              {% if erreurs_profil.phone_number %}
+              <p class="text-sm text-red-600 mt-1">
+                {{ erreurs_profil.phone_number }}
+              </p>
+              {% endif %}
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Sexe</label
+              >
+              <select
+                name="sex"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+              >
+                <option value="">Choisir…</option>
+                <option value="H" {% if donnees_profil.sex == 'H' %}selected{% endif %}>
+                  Homme
+                </option>
+                <option value="F" {% if donnees_profil.sex == 'F' %}selected{% endif %}>
+                  Femme
+                </option>
+                <option value="A" {% if donnees_profil.sex == 'A' %}selected{% endif %}>
+                  Autre
+                </option>
+              </select>
+              {% if erreurs_profil.sex %}
+              <p class="text-sm text-red-600 mt-1">
+                {{ erreurs_profil.sex }}
+              </p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-4">
+          <a
+            href="{% url 'health:tableau_de_bord' %}"
+            class="px-5 py-2 rounded-lg border border-gray-300 text-gray-700"
+            >Annuler</a
+          >
+          <button
+            type="submit"
+            class="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700"
+          >
+            Enregistrer les modifications
+          </button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
+
