@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-santé 4.0 - H-TECH | {% block title %}{% endblock %}</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0A74DA',
+                        secondary: '#22C58E',
+                        dark: '#1D242E',
+                        light: '#F2F5F9'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .high-contrast {
+            background-color: #1D242E;
+            color: white;
+        }
+        .high-contrast .bg-white {
+            background-color: #2D3748 !important;
+            color: white;
+        }
+        .high-contrast .text-gray-600 {
+            color: #CBD5E0 !important;
+        }
+        .high-contrast .border-gray-300 {
+            border-color: #4A5568 !important;
+        }
+    </style>
+</head>
+<body class="{% if high_contrast %}high-contrast{% else %}bg-light{% endif %}">
+    {% block content %}{% endblock %}
+    
+    <script>
+        // Initialiser les icônes Lucide
+        lucide.createIcons();
+        
+        // Gestion du contraste
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+            localStorage.setItem('highContrast', document.body.classList.contains('high-contrast'));
+        }
+        
+        // Charger l'état du contraste
+        if (localStorage.getItem('highContrast') === 'true') {
+            document.body.classList.add('high-contrast');
+        }
+    </script>
+</body>
+</html>

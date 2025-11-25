@@ -1,8 +1,5 @@
 from django.apps import AppConfig
 
-
-class HealthConfig(AppConfig):
+class FrontendConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'health'
-    verbose_name = 'E-Santé 4.0'
-
+    name = 'frontend'

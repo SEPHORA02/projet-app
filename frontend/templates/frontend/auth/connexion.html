@@ -1,0 +1,122 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-white flex">
+    <!-- Partie gauche - Formulaire -->
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-8">
+        <div class="w-full max-w-md">
+            <!-- Logo et titre -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-primary mb-4">
+                    <i data-lucide="heart" class="w-8 h-8 text-white" fill="white"></i>
+                </div>
+                <h1 class="text-dark text-2xl font-bold mb-2">E-santé 4.0</h1>
+                <p class="text-gray-600">Conçu par H-TECH</p>
+                <p class="text-primary mt-3">Surveillez votre environnement. Protégez vos poumons.</p>
+            </div>
+
+            <!-- Messages -->
+            {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                <div class="p-4 rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Formulaire de connexion -->
+            <form method="POST" action="{% url 'connexion' %}" class="space-y-4">
+                {% csrf_token %}
+                <div class="space-y-2">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Adresse e-mail</label>
+                    <div class="relative">
+                        <i data-lucide="mail" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="exemple@h-tech.com"
+                            class="w-full pl-10 h-12 border border-gray-300 rounded-lg focus:border-primary focus:ring-primary"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
+                    <div class="relative">
+                        <i data-lucide="lock" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="••••••••"
+                            class="w-full pl-10 h-12 border border-gray-300 rounded-lg focus:border-primary focus:ring-primary"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full h-12 bg-primary hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                >
+                    Se connecter
+                </button>
+
+                <div class="text-center mt-4">
+                    <a href="#" class="text-primary hover:underline">
+                        Mot de passe oublié ?
+                    </a>
+                </div>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-gray-600">
+                    Pas de compte ? 
+                    <a href="{% url 'inscription' %}" class="text-primary hover:underline font-medium">
+                        Créer un compte
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Partie droite - Illustration -->
+    <div class="hidden lg:flex w-1/2 bg-light items-center justify-center p-12 relative overflow-hidden">
+        <div class="relative z-10 text-center max-w-lg">
+            <div class="mb-8 opacity-20">
+                <i data-lucide="heart" class="w-64 h-64 mx-auto text-primary"></i>
+            </div>
+            <h2 class="text-dark text-2xl font-bold mb-4">Technologie de prévention respiratoire</h2>
+            <p class="text-gray-600 mb-6">
+                Notre IA analyse en temps réel vos données physiologiques et environnementales 
+                pour prédire et prévenir les risques respiratoires.
+            </p>
+            <div class="grid grid-cols-3 gap-4">
+                <div class="bg-white rounded-xl p-4">
+                    <div class="text-primary font-medium mb-2">IA Prédictive</div>
+                    <div class="text-gray-600 text-sm">Analyse continue</div>
+                </div>
+                <div class="bg-white rounded-xl p-4">
+                    <div class="text-secondary font-medium mb-2">Capteurs IoT</div>
+                    <div class="text-gray-600 text-sm">Données précises</div>
+                </div>
+                <div class="bg-white rounded-xl p-4">
+                    <div class="text-primary font-medium mb-2">Alertes</div>
+                    <div class="text-gray-600 text-sm">Temps réel</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Décoration de fond -->
+        <div class="absolute top-0 right-0 w-96 h-96 bg-primary opacity-5 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-secondary opacity-5 rounded-full blur-3xl"></div>
+    </div>
+</div>
+{% endblock %}
