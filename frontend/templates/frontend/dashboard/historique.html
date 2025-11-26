@@ -8,13 +8,15 @@
     <!-- En-tête -->
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-dark text-2xl font-bold mb-1">Historique & Tendances</h1>
-            <p class="text-gray-500">Évolution de vos données de santé</p>
+            <h1 class="text-dark dark:text-white text-2xl font-bold mb-1">Historique & Tendances</h1>
+            <p class="text-gray-500 dark:text-gray-400">Évolution de vos données de santé</p>
         </div>
-        
+
         <div class="flex items-center gap-2">
-            <button onclick="toggleContrast()" class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                <i data-lucide="moon" class="w-4 h-4"></i>
+            <button onclick="toggleContrast()"
+                class="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300">
+                <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+                <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
                 <span class="hidden sm:inline">Contraste</span>
             </button>
         </div>
@@ -22,13 +24,15 @@
 
     <!-- Filtres de période -->
     <div class="flex gap-2 flex-wrap">
-        <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+        <button
+            class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
             Aujourd'hui
         </button>
         <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors">
             7 jours
         </button>
-        <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+        <button
+            class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
             30 jours
         </button>
     </div>
@@ -36,69 +40,69 @@
     <!-- Statistiques -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Rythme cardiaque -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #EF444415">
                     <i data-lucide="heart" class="w-5 h-5" style="color: #EF4444"></i>
                 </div>
             </div>
-            <div class="text-gray-500 mb-1">Rythme cardiaque</div>
+            <div class="text-gray-500 dark:text-gray-400 mb-1">Rythme cardiaque</div>
             <div class="flex items-baseline gap-2 mb-2">
-                <span class="text-dark text-lg font-semibold">69</span>
-                <span class="text-gray-500">bpm</span>
+                <span class="text-dark dark:text-white text-lg font-semibold">69</span>
+                <span class="text-gray-500 dark:text-gray-400">bpm</span>
             </div>
-            <div class="text-gray-500 text-sm">Min: 62 • Max: 75</div>
+            <div class="text-gray-500 dark:text-gray-400 text-sm">Min: 62 • Max: 75</div>
         </div>
 
         <!-- Humidité -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #0A74DA15">
                     <i data-lucide="droplets" class="w-5 h-5" style="color: #0A74DA"></i>
                 </div>
             </div>
-            <div class="text-gray-500 mb-1">Humidité</div>
+            <div class="text-gray-500 dark:text-gray-400 mb-1">Humidité</div>
             <div class="flex items-baseline gap-2 mb-2">
-                <span class="text-dark text-lg font-semibold">55</span>
-                <span class="text-gray-500">%</span>
+                <span class="text-dark dark:text-white text-lg font-semibold">55</span>
+                <span class="text-gray-500 dark:text-gray-400">%</span>
             </div>
-            <div class="text-gray-500 text-sm">Min: 52 • Max: 60</div>
+            <div class="text-gray-500 dark:text-gray-400 text-sm">Min: 52 • Max: 60</div>
         </div>
 
         <!-- CO₂ -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #22C58E15">
                     <i data-lucide="wind" class="w-5 h-5" style="color: #22C58E"></i>
                 </div>
             </div>
-            <div class="text-gray-500 mb-1">CO₂</div>
+            <div class="text-gray-500 dark:text-gray-400 mb-1">CO₂</div>
             <div class="flex items-baseline gap-2 mb-2">
-                <span class="text-dark text-lg font-semibold">445</span>
-                <span class="text-gray-500">ppm</span>
+                <span class="text-dark dark:text-white text-lg font-semibold">445</span>
+                <span class="text-gray-500 dark:text-gray-400">ppm</span>
             </div>
-            <div class="text-gray-500 text-sm">Min: 410 • Max: 480</div>
+            <div class="text-gray-500 dark:text-gray-400 text-sm">Min: 410 • Max: 480</div>
         </div>
 
         <!-- Score de risque -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-start justify-between mb-4">
                 <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #0A74DA15">
                     <i data-lucide="activity" class="w-5 h-5" style="color: #0A74DA"></i>
                 </div>
             </div>
-            <div class="text-gray-500 mb-1">Score de risque</div>
+            <div class="text-gray-500 dark:text-gray-400 mb-1">Score de risque</div>
             <div class="flex items-baseline gap-2 mb-2">
-                <span class="text-dark text-lg font-semibold">33</span>
-                <span class="text-gray-500">/100</span>
+                <span class="text-dark dark:text-white text-lg font-semibold">33</span>
+                <span class="text-gray-500 dark:text-gray-400">/100</span>
             </div>
-            <div class="text-gray-500 text-sm">Min: 22 • Max: 40</div>
+            <div class="text-gray-500 dark:text-gray-400 text-sm">Min: 22 • Max: 40</div>
         </div>
     </div>
 
     <!-- Graphiques simplifiés -->
-    <div class="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 class="text-dark font-semibold mb-4 flex items-center gap-2">
+    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+        <h3 class="text-dark dark:text-white font-semibold mb-4 flex items-center gap-2">
             <i data-lucide="activity" class="w-5 h-5 text-primary"></i>
             Évolution du score de risque (7 derniers jours)
         </h3>
@@ -111,7 +115,7 @@
             <div class="flex-1 bg-primary rounded-t-lg opacity-80" style="height: 56%"></div>
             <div class="flex-1 bg-primary rounded-t-lg opacity-80" style="height: 58%"></div>
         </div>
-        <div class="flex justify-between text-gray-500 mt-2 text-sm">
+        <div class="flex justify-between text-gray-500 dark:text-gray-400 mt-2 text-sm">
             <span>Lun</span>
             <span>Mar</span>
             <span>Mer</span>
