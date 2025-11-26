@@ -1,6 +1,6 @@
 
 
-🩺 E-Santé 4.0 : Système intelligent de prédiction pour la prévention des maladies respiratoires
+E-Santé 4.0 : Système intelligent de prédiction pour la prévention des maladies respiratoires
 
 Description du projet :
 Ce projet s’inscrit dans le cadre de l’APP3 (Apprentissage Par Projet) et a pour objectif de développer une solution innovante d’E-santé intelligente.
