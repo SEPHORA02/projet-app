@@ -6,9 +6,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 ##MALICK
 from django.http import JsonResponse
-import requests
 ##end Malick
-import json
 
 def login_view(request):
     if request.method == 'POST':
@@ -78,32 +76,13 @@ def logout_view(request):
     logout(request)
     return JsonResponse({'success': True, 'redirect': '/login/'})
 
-##Malick
-const API_ENDPOINT = '/health/api/heartbeat/'
+##MALICK
 ESP8266_IP = "http://192.168.1.105"
 def get_heartbeat(request):
-    """API pour récupérer les données du capteur cardiaque"""
-    try:
-        response = requests.get(f"{ESP8266_IP}/api/heartbeat", timeout=2)
-        data = response.json()
-        
-        # Ajout d'un message de statut
-        if data['finger_detected']:
-            if data['bpm_avg'] < 60:
-                data['message'] = "Fréquence cardiaque basse"
-            elif data['bpm_avg'] > 100:
-                data['message'] = "Fréquence cardiaque élevée"
-            else:
-                data['message'] = "Fréquence cardiaque normale"
-        else:
-            data['message'] = "Placez votre doigt sur le capteur"
-        
-        return JsonResponse(data)
-        
-    except requests.exceptions.Timeout:
-        return JsonResponse({"error": "ESP8266 timeout"}, status=503)
-    except requests.exceptions.ConnectionError:
-        return JsonResponse({"error": "ESP8266 déconnecté"}, status=503)
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+    """Simple heartbeat pour vérifier que le serveur Django est vivant"""
+    return JsonResponse({
+        "status": "alive",
+        "message": "Django API en ligne",
+        "timestamp": __import__('datetime').datetime.now().isoformat()
+    })
 ##end Malick

@@ -1,17 +1,16 @@
 from django.urls import path
-from .views.auth_views import *
-from .views.dashboard_views import *
+from . import views
 
 urlpatterns = [
-    # Authentication
-    path('connexion/', connexion, name='connexion'),
-    path('inscription/', inscription, name='inscription'),
-    path('deconnexion/', deconnexion, name='deconnexion'),
-    
-    # Dashboard
-    path('tableau-bord/', tableau_bord, name='tableau_bord'),
-    path('historique/', historique, name='historique'),
-    path('rapports/', rapports, name='rapports'),
-    path('alertes/', alertes, name='alertes'),
-    path('parametres/', parametres, name='parametres'),
+    # Authentification
+    path('connexion/', views.login_view, name='connexion'),
+    path('inscription/', views.register_view, name='inscription'),
+    path('deconnexion/', views.logout_view, name='deconnexion'),
+
+    # Dashboard & pages
+    path('tableau-bord/', views.dashboard_view, name='tableau_bord'),
+    path('historique/', views.history_view, name='historique'),          # ← history_view
+    path('rapports/', views.report_view, name='rapports'),                # ← report_view
+    path('alertes/', views.alerts_view, name='alertes'),                  # ← alerts_view
+    path('parametres/', views.settings_view, name='parametres'),         # ← settings_view
 ]
