@@ -49,6 +49,12 @@
         const API_ENDPOINT = 'health/api/heartbeat/'; //Route Django
         //End Malick
     </script>
+    {% block extra_js %}
+    <script src="{% static 'frontend/js/api.js' %}"></script>
+    <script>
+        document.body.dataset.heartbeatUrl = "{% url 'heartbeat_api' %}";
+    </script>
+{% endblock %}
 </body>
 
 </html>
