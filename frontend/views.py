@@ -4,9 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-##MALICK
-from django.http import JsonResponse
-##end Malick
+
 
 def login_view(request):
     if request.method == 'POST':

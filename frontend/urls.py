@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.contrib import admin
+from django.urls import path, include
 
 urlpatterns = [
     # Authentification
@@ -13,4 +15,6 @@ urlpatterns = [
     path('rapports/', views.report_view, name='rapports'),                # ← report_view
     path('alertes/', views.alerts_view, name='alertes'),                  # ← alerts_view
     path('parametres/', views.settings_view, name='parametres'),         # ← settings_view
+    path('admin/', admin.site.urls),
+    path('api/', include('health.urls')),  # Cette ligne est cruciale
 ]

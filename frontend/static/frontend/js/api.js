@@ -1,9 +1,7 @@
-// frontend/static/frontend/js/api.js
-
 const HEARTBEAT_URL = document.body.dataset.heartbeatUrl;
-const UPDATE_INTERVAL = 3000; // toutes les 3 secondes (ajuste comme tu veux)
+const UPDATE_INTERVAL = 3000; // toutes les 3 secondes 
 
-// Fonction qui fait battre le petit cœur
+// Fonction qui fait battre le cœur
 async function heartbeat() {
     try {
         const response = await fetch(HEARTBEAT_URL);
