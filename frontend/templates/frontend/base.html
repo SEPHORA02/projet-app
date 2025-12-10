@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -54,7 +55,7 @@
     <script>
         document.body.dataset.heartbeatUrl = "{% url 'heartbeat_api' %}";
     </script>
-{% endblock %}
+    {% endblock %}
 </body>
 
 </html>
