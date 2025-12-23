@@ -8,6 +8,8 @@ urlpatterns = [
     path('connexion/', views.login_view, name='connexion'),
     path('inscription/', views.register_view, name='inscription'),
     path('deconnexion/', views.logout_view, name='deconnexion'),
+    
+     path('accounts/login/', views.login_view, name='login'),  # Redirection Django par défaut
 
     # Dashboard & pages
     path('tableau-bord/', views.dashboard_view, name='tableau_bord'),
