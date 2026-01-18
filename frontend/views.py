@@ -76,7 +76,7 @@ def logout_view(request):
     return JsonResponse({'success': True, 'redirect': '/login/'})
 
 ##MALICK
-ESP8266_IP = "http://192.168.1.17"
+ESP8266_IP = "http://192.168.137.223"
 def get_heartbeat(request):
     """Simple heartbeat pour vérifier que le serveur Django est vivant"""
     return JsonResponse({

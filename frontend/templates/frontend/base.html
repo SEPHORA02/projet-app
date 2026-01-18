@@ -51,7 +51,7 @@
         //End Malick
     </script>
     {% block extra_js %}
-    <script src="{% static 'frontend/js/api.js' %}"></script>
+    <script src="{% static 'frontend/js/api.js?v=2' %}"></script>
     <script>
         document.body.dataset.heartbeatUrl = "{% url 'heartbeat_api' %}";
     </script>
