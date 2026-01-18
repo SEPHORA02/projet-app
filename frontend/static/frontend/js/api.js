@@ -4,7 +4,7 @@
 
 const ESP8266_CONFIG = {
     // Remplacez par l'adresse IP de votre ESP8266
-    baseUrl: 'http://192.168.1.17',
+    baseUrl: 'http://192.168.137.223',
     
     // Endpoints de votre ESP8266
     endpoints: {
@@ -471,3 +471,5 @@ window.ESP8266API = {
     controller: dashboardController,
     config: ESP8266_CONFIG
 };
+console.log('[Dashboard] API ESP8266 initialisée et prête à l\'emploi.');
+console.log(ESP8266_CONFIG);
