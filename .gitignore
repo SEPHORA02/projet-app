@@ -22,6 +22,12 @@ venv/
 env/
 ENV/
 
+# Environnement
+.env
+
+# Firebase key
+config/firebase_key.json
+
 # IDE
 .vscode/
 .idea/
