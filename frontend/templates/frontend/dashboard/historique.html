@@ -38,65 +38,10 @@
     </div>
 
     <!-- Statistiques -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- Rythme cardiaque -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-            <div class="flex items-start justify-between mb-4">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #EF444415">
-                    <i data-lucide="heart" class="w-5 h-5" style="color: #EF4444"></i>
-                </div>
-            </div>
-            <div class="text-gray-500 dark:text-gray-400 mb-1">Rythme cardiaque</div>
-            <div class="flex items-baseline gap-2 mb-2">
-                <span class="text-dark dark:text-white text-lg font-semibold">69</span>
-                <span class="text-gray-500 dark:text-gray-400">bpm</span>
-            </div>
-            <div class="text-gray-500 dark:text-gray-400 text-sm">Min: 62 • Max: 75</div>
-        </div>
-
-        <!-- Humidité -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-            <div class="flex items-start justify-between mb-4">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #0A74DA15">
-                    <i data-lucide="droplets" class="w-5 h-5" style="color: #0A74DA"></i>
-                </div>
-            </div>
-            <div class="text-gray-500 dark:text-gray-400 mb-1">Humidité</div>
-            <div class="flex items-baseline gap-2 mb-2">
-                <span class="text-dark dark:text-white text-lg font-semibold">55</span>
-                <span class="text-gray-500 dark:text-gray-400">%</span>
-            </div>
-            <div class="text-gray-500 dark:text-gray-400 text-sm">Min: 52 • Max: 60</div>
-        </div>
-
-        <!-- CO₂ -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-            <div class="flex items-start justify-between mb-4">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #22C58E15">
-                    <i data-lucide="wind" class="w-5 h-5" style="color: #22C58E"></i>
-                </div>
-            </div>
-            <div class="text-gray-500 dark:text-gray-400 mb-1">CO₂</div>
-            <div class="flex items-baseline gap-2 mb-2">
-                <span class="text-dark dark:text-white text-lg font-semibold">445</span>
-                <span class="text-gray-500 dark:text-gray-400">ppm</span>
-            </div>
-            <div class="text-gray-500 dark:text-gray-400 text-sm">Min: 410 • Max: 480</div>
-        </div>
-
-        <!-- Score de risque -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-            <div class="flex items-start justify-between mb-4">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #0A74DA15">
-                    <i data-lucide="activity" class="w-5 h-5" style="color: #0A74DA"></i>
-                </div>
-            </div>
-            <div class="text-gray-500 dark:text-gray-400 mb-1">Score de risque</div>
-            <div class="flex items-baseline gap-2 mb-2">
-                <span class="text-dark dark:text-white text-lg font-semibold">33</span>
-                <span class="text-gray-500 dark:text-gray-400">/100</span>
-            </div>
-            <div class="text-gray-500 dark:text-gray-400 text-sm">Min: 22 • Max: 40</div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="stats-container">
+        <div class="text-center text-gray-500 py-8 col-span-full">
+            <i data-lucide="loader" class="w-6 h-6 animate-spin inline-block"></i>
+            Chargement des statistiques...
         </div>
     </div>
 
@@ -106,24 +51,198 @@
             <i data-lucide="activity" class="w-5 h-5 text-primary"></i>
             Évolution du score de risque (7 derniers jours)
         </h3>
-        <div class="flex items-end justify-between h-32 gap-2">
-            <div class="flex-1 bg-primary rounded-t-lg opacity-80" style="height: 64%"></div>
-            <div class="flex-1 bg-primary rounded-t-lg opacity-80" style="height: 70%"></div>
-            <div class="flex-1 bg-primary rounded-t-lg opacity-80" style="height: 60%"></div>
-            <div class="flex-1 bg-primary rounded-t-lg opacity-80" style="height: 76%"></div>
-            <div class="flex-1 bg-primary rounded-t-lg opacity-80" style="height: 66%"></div>
-            <div class="flex-1 bg-primary rounded-t-lg opacity-80" style="height: 56%"></div>
-            <div class="flex-1 bg-primary rounded-t-lg opacity-80" style="height: 58%"></div>
+        <div class="flex items-end justify-between h-32 gap-2" id="chart-container">
+            <div class="flex-1 bg-gray-300 dark:bg-gray-600 rounded-t-lg opacity-50"></div>
         </div>
-        <div class="flex justify-between text-gray-500 dark:text-gray-400 mt-2 text-sm">
-            <span>Lun</span>
-            <span>Mar</span>
-            <span>Mer</span>
-            <span>Jeu</span>
-            <span>Ven</span>
-            <span>Sam</span>
-            <span>Dim</span>
+        <div class="flex justify-between text-gray-500 dark:text-gray-400 mt-2 text-sm" id="days-container">
+            <span>Chargement...</span>
         </div>
     </div>
 </div>
+
+<script>
+    // Charger les données dynamiquement
+    async function loadHistoryData() {
+        try {
+            const response = await fetch('/api/alertes/?limit=200');
+            const data = await response.json();
+            
+            if (data.status === 'success' && data.alerts) {
+                const alerts = data.alerts;
+                
+                // Calculer les statistiques par type de capteur
+                const stats = calculateStats(alerts);
+                renderStats(stats);
+                renderChart(alerts);
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement:', error);
+        }
+    }
+
+    function calculateStats(alerts) {
+        if (alerts.length === 0) {
+            return {
+                hr: { avg: 0, min: 0, max: 0 },
+                humidity: { avg: 0, min: 0, max: 0 },
+                co2: { avg: 0, min: 0, max: 0 },
+                risk: { avg: 0, min: 0, max: 0 }
+            };
+        }
+
+        // Extraire les données des capteurs
+        const hrValues = [];
+        const humidityValues = [];
+        const co2Values = [];
+        const severityMap = { 'critical': 80, 'high': 60, 'medium': 40, 'low': 20 };
+        const riskValues = [];
+
+        alerts.forEach(alert => {
+            const sensor = alert.sensor_data || {};
+            if (sensor.heart_rate) hrValues.push(parseInt(sensor.heart_rate));
+            if (sensor.humidity) humidityValues.push(parseInt(sensor.humidity));
+            if (sensor.co2) co2Values.push(parseInt(sensor.co2));
+            riskValues.push(severityMap[alert.severity] || 20);
+        });
+
+        const avg = (arr) => arr.length > 0 ? Math.round(arr.reduce((a, b) => a + b) / arr.length) : 0;
+        const min = (arr) => arr.length > 0 ? Math.min(...arr) : 0;
+        const max = (arr) => arr.length > 0 ? Math.max(...arr) : 0;
+
+        return {
+            hr: { avg: avg(hrValues), min: min(hrValues), max: max(hrValues) },
+            humidity: { avg: avg(humidityValues), min: min(humidityValues), max: max(humidityValues) },
+            co2: { avg: avg(co2Values), min: min(co2Values), max: max(co2Values) },
+            risk: { avg: avg(riskValues), min: min(riskValues), max: max(riskValues) }
+        };
+    }
+
+    function renderStats(stats) {
+        const statsContainer = document.getElementById('stats-container');
+        
+        const html = `
+            <!-- Rythme cardiaque -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #EF444415">
+                        <i data-lucide="heart" class="w-5 h-5" style="color: #EF4444"></i>
+                    </div>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400 mb-1">Rythme cardiaque</div>
+                <div class="flex items-baseline gap-2 mb-2">
+                    <span class="text-dark dark:text-white text-lg font-semibold">${stats.hr.avg || '--'}</span>
+                    <span class="text-gray-500 dark:text-gray-400">bpm</span>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400 text-sm">Min: ${stats.hr.min} • Max: ${stats.hr.max}</div>
+            </div>
+
+            <!-- Humidité -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #0A74DA15">
+                        <i data-lucide="droplets" class="w-5 h-5" style="color: #0A74DA"></i>
+                    </div>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400 mb-1">Humidité</div>
+                <div class="flex items-baseline gap-2 mb-2">
+                    <span class="text-dark dark:text-white text-lg font-semibold">${stats.humidity.avg || '--'}</span>
+                    <span class="text-gray-500 dark:text-gray-400">%</span>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400 text-sm">Min: ${stats.humidity.min} • Max: ${stats.humidity.max}</div>
+            </div>
+
+            <!-- CO₂ -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #22C58E15">
+                        <i data-lucide="wind" class="w-5 h-5" style="color: #22C58E"></i>
+                    </div>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400 mb-1">CO₂</div>
+                <div class="flex items-baseline gap-2 mb-2">
+                    <span class="text-dark dark:text-white text-lg font-semibold">${stats.co2.avg || '--'}</span>
+                    <span class="text-gray-500 dark:text-gray-400">ppm</span>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400 text-sm">Min: ${stats.co2.min} • Max: ${stats.co2.max}</div>
+            </div>
+
+            <!-- Score de risque -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #0A74DA15">
+                        <i data-lucide="activity" class="w-5 h-5" style="color: #0A74DA"></i>
+                    </div>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400 mb-1">Score de risque</div>
+                <div class="flex items-baseline gap-2 mb-2">
+                    <span class="text-dark dark:text-white text-lg font-semibold">${stats.risk.avg}</span>
+                    <span class="text-gray-500 dark:text-gray-400">/100</span>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400 text-sm">Min: ${stats.risk.min} • Max: ${stats.risk.max}</div>
+            </div>
+        `;
+        
+        statsContainer.innerHTML = html;
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }
+
+    function renderChart(alerts) {
+        if (alerts.length === 0) return;
+
+        // Grouper les alertes par jour
+        const dayGroups = {};
+        const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+        const now = new Date();
+
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(now);
+            date.setDate(date.getDate() - i);
+            const key = date.toISOString().split('T')[0];
+            dayGroups[key] = [];
+        }
+
+        // Remplir les groupes
+        const severityMap = { 'critical': 80, 'high': 60, 'medium': 40, 'low': 20 };
+        alerts.forEach(alert => {
+            const date = new Date(alert.timestamp).toISOString().split('T')[0];
+            if (dayGroups.hasOwnProperty(date)) {
+                dayGroups[date].push(severityMap[alert.severity] || 20);
+            }
+        });
+
+        // Calculer les moyennes par jour
+        const chartData = Object.keys(dayGroups)
+            .sort()
+            .map(key => {
+                const values = dayGroups[key];
+                return values.length > 0 ? Math.round(values.reduce((a, b) => a + b) / values.length) : 0;
+            });
+
+        // Créer le graphique
+        const maxValue = Math.max(...chartData, 1);
+        const chartHtml = chartData.map((value, idx) => {
+            const heightPercent = (value / 100) * 100;
+            return `<div class="flex-1 bg-primary rounded-t-lg opacity-80" style="height: ${heightPercent}%"></div>`;
+        }).join('');
+
+        const daysHtml = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
+            .map(day => `<span>${day}</span>`)
+            .join('');
+
+        document.getElementById('chart-container').innerHTML = chartHtml || '<div class="flex-1 bg-gray-300 rounded-t-lg opacity-30"></div>';
+        document.getElementById('days-container').innerHTML = daysHtml;
+        
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }
+
+    // Charger les données au démarrage
+    loadHistoryData();
+    
+    // Rafraîchir toutes les 30 secondes
+    setInterval(loadHistoryData, 30000);
+</script>
 {% endblock %}
