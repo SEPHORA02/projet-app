@@ -12,7 +12,7 @@
             <p class="text-gray-500 dark:text-gray-400">Analyse et recommandations personnalisées</p>
         </div>
         <div class="flex items-center gap-2">
-            <button onclick=" alert('fonctionnalité en dev')"
+            <button onclick="downloadReportPDF()"
                 class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
                 <i data-lucide="download" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Télécharger PDF</span>
@@ -41,28 +41,28 @@
             </div>
 
             <!-- Résumé des métriques -->
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4" id="metrics-container">
                 <div class="bg-light dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                     <div class="text-gray-500 dark:text-gray-400 mb-1">Risque moyen</div>
-                    <div class="text-dark dark:text-white font-semibold">33/100</div>
+                    <div class="text-dark dark:text-white font-semibold" id="avg-risk">--/100</div>
                 </div>
                 <div class="bg-light dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                     <div class="text-gray-500 dark:text-gray-400 mb-1">Risque min</div>
-                    <div class="text-[#22C58E] font-semibold">22/100</div>
+                    <div class="text-[#22C58E] font-semibold" id="min-risk">--/100</div>
                 </div>
                 <div class="bg-light dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                     <div class="text-gray-500 dark:text-gray-400 mb-1">Risque max</div>
-                    <div class="text-[#EF4444] font-semibold">45/100</div>
+                    <div class="text-[#EF4444] font-semibold" id="max-risk">--/100</div>
                 </div>
                 <div class="bg-light dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                     <div class="text-gray-500 dark:text-gray-400 mb-1">Alertes</div>
-                    <div class="text-dark dark:text-white font-semibold">3</div>
+                    <div class="text-dark dark:text-white font-semibold" id="alert-count">0</div>
                 </div>
                 <div class="bg-light dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                     <div class="text-gray-500 dark:text-gray-400 mb-1">Amélioration</div>
-                    <div class="text-[#22C58E] font-semibold flex items-center gap-1">
+                    <div class="text-[#22C58E] font-semibold flex items-center gap-1" id="improvement">
                         <i data-lucide="trending-down" class="w-4 h-4"></i>
-                        -8%
+                        --%
                     </div>
                 </div>
             </div>
@@ -126,78 +126,10 @@
                 </div>
             </div>
         </div>
-        <div class="space-y-4">
-            <!-- Recommandation 1 - Priorité haute -->
-            <div
-                class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all">
-                <div class="p-6">
-                    <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 bg-[#FEE2E2]">
-                            <i data-lucide="alert-triangle" class="w-6 h-6 text-[#DC2626]"></i>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
-                                <h3 class="text-dark dark:text-white font-semibold">Améliorer la qualité de l'air</h3>
-                                <span
-                                    class="px-3 py-1 bg-[#FEE2E2] text-[#DC2626] border border-[#EF4444] rounded-full text-sm font-medium">
-                                    Priorité haute
-                                </span>
-                            </div>
-                            <p class="text-gray-600 dark:text-gray-300">
-                                Le niveau de CO₂ a dépassé 480 ppm à plusieurs reprises. Aérez régulièrement votre
-                                espace.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recommandation 2 - Priorité moyenne -->
-            <div
-                class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all">
-                <div class="p-6">
-                    <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 bg-[#FEF3C7]">
-                            <i data-lucide="activity" class="w-6 h-6 text-[#D97706]"></i>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
-                                <h3 class="text-dark dark:text-white font-semibold">Optimiser l'humidité</h3>
-                                <span
-                                    class="px-3 py-1 bg-[#FEF3C7] text-[#D97706] border border-[#FF9F43] rounded-full text-sm font-medium">
-                                    Priorité moyenne
-                                </span>
-                            </div>
-                            <p class="text-gray-600 dark:text-gray-300">
-                                L'humidité ambiante est descendue à 45%. Envisagez d'utiliser un humidificateur.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recommandation 3 - Priorité faible -->
-            <div
-                class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all">
-                <div class="p-6">
-                    <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 bg-[#D1FAE5]">
-                            <i data-lucide="check-circle" class="w-6 h-6 text-[#059669]"></i>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
-                                <h3 class="text-dark dark:text-white font-semibold">Maintenir l'activité physique</h3>
-                                <span
-                                    class="px-3 py-1 bg-[#D1FAE5] text-[#059669] border border-[#22C58E] rounded-full text-sm font-medium">
-                                    Priorité faible
-                                </span>
-                            </div>
-                            <p class="text-gray-600 dark:text-gray-300">
-                                Votre rythme cardiaque au repos est stable et dans la norme. Continuez ainsi.
-                            </p>
-                        </div>
-                    </div>
-                </div>
+        <div class="space-y-4" id="recommendations-container">
+            <div class="text-center text-gray-500 py-8">
+                <i data-lucide="loader" class="w-6 h-6 animate-spin inline-block"></i>
+                Chargement des recommandations...
             </div>
         </div>
     </div>
@@ -210,47 +142,10 @@
                 Insights IA
             </h2>
         </div>
-        <div class="p-6 space-y-4">
-            <!-- Insight Santé cardiaque -->
-            <div class="bg-light dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                <div class="flex items-start gap-3 mb-3">
-                    <i data-lucide="heart" class="w-5 h-5 text-[#EF4444] flex-shrink-0 mt-1"></i>
-                    <div>
-                        <div class="text-dark dark:text-white font-medium mb-1">Santé cardiaque</div>
-                        <p class="text-gray-600 dark:text-gray-300">
-                            Votre rythme cardiaque est stable avec une moyenne de 69 bpm.
-                            Aucune anomalie détectée sur les dernières 24 heures.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Insight Qualité environnementale -->
-            <div class="bg-light dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                <div class="flex items-start gap-3 mb-3">
-                    <i data-lucide="activity" class="w-5 h-5 text-primary flex-shrink-0 mt-1"></i>
-                    <div>
-                        <div class="text-dark dark:text-white font-medium mb-1">Qualité environnementale</div>
-                        <p class="text-gray-600 dark:text-gray-300">
-                            L'environnement a été optimal pendant 75% du temps.
-                            Les pics de CO<sub>2</sub> entre 12h et 14h nécessitent une attention.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Insight Tendance positive -->
-            <div class="bg-light dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-                <div class="flex items-start gap-3">
-                    <i data-lucide="trending-down" class="w-5 h-5 text-[#22C58E] flex-shrink-0 mt-1"></i>
-                    <div>
-                        <div class="text-dark dark:text-white font-medium mb-1">Tendance positive</div>
-                        <p class="text-gray-600 dark:text-gray-300">
-                            Votre score de risque a diminué de 8% par rapport à la semaine dernière.
-                            Continuez vos bonnes habitudes !
-                        </p>
-                    </div>
-                </div>
+        <div class="p-6 space-y-4" id="insights-container">
+            <div class="text-center text-gray-500 py-8">
+                <i data-lucide="loader" class="w-6 h-6 animate-spin inline-block"></i>
+                Chargement des insights...
             </div>
         </div>
     </div>
@@ -265,7 +160,7 @@
                         Téléchargez votre rapport détaillé au format PDF pour le partager avec votre médecin
                     </p>
                 </div>
-                <button onclick=" alert('fonctionnalité en dev')"
+                <button onclick="downloadReportPDF()"
                     class="bg-white text-primary hover:bg-gray-100 px-6 py-3 rounded-lg font-medium flex items-center gap-2 flex-shrink-0 transition-colors">
                     <i data-lucide="download" class="w-4 h-4"></i>
                     Télécharger PDF
@@ -283,9 +178,209 @@
         day: 'numeric'
     });
 
+    // Charger les données du rapport
+    async function loadReportData() {
+        try {
+            const response = await fetch('/api/alertes/?limit=100');
+            const data = await response.json();
+            
+            if (data.status === 'success' && data.alerts) {
+                const alerts = data.alerts;
+                
+                // Calculer les métriques
+                if (alerts.length > 0) {
+                    const severityMap = { 'critical': 80, 'high': 60, 'medium': 40, 'low': 20 };
+                    const riskValues = alerts.map(a => severityMap[a.severity] || 20);
+                    const avgRisk = Math.round(riskValues.reduce((a, b) => a + b) / riskValues.length);
+                    const minRisk = Math.min(...riskValues);
+                    const maxRisk = Math.max(...riskValues);
+                    
+                    document.getElementById('avg-risk').textContent = avgRisk + '/100';
+                    document.getElementById('min-risk').textContent = minRisk + '/100';
+                    document.getElementById('max-risk').textContent = maxRisk + '/100';
+                    document.getElementById('alert-count').textContent = alerts.length;
+                    document.getElementById('improvement').innerHTML = `
+                        <i data-lucide="trending-down" class="w-4 h-4"></i>
+                        ${Math.max(0, 100 - avgRisk)}%
+                    `;
+                    
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                    
+                    // Charger les recommandations
+                    loadRecommendations(alerts);
+                    
+                    // Charger les insights
+                    loadInsights(alerts);
+                }
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement des données:', error);
+        }
+    }
+
+    function loadRecommendations(alerts) {
+        if (alerts.length === 0) {
+            document.getElementById('recommendations-container').innerHTML = `
+                <div class="text-center text-gray-500 py-8">
+                    <p>Aucune alerte pour générer des recommandations.</p>
+                </div>
+            `;
+            return;
+        }
+
+        const latestAlert = alerts[0];
+        const analysis = latestAlert.ai_analysis || {};
+        const recommendations = analysis.recommendations || latestAlert.recommendations || [];
+
+        const priorityMap = {
+            'haute': { color: '#DC2626', bgColor: '#FEE2E2', borderColor: '#EF4444', icon: 'alert-triangle' },
+            'moyenne': { color: '#D97706', bgColor: '#FEF3C7', borderColor: '#FF9F43', icon: 'activity' },
+            'faible': { color: '#059669', bgColor: '#D1FAE5', borderColor: '#22C58E', icon: 'check-circle' }
+        };
+
+        let html = '';
+        recommendations.slice(0, 3).forEach((reco, index) => {
+            const priority = index === 0 ? 'haute' : index === 1 ? 'moyenne' : 'faible';
+            const priorityLabel = priority.charAt(0).toUpperCase() + priority.slice(1);
+            const prioInfo = priorityMap[priority];
+
+            html += `
+                <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all">
+                    <div class="p-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: ${prioInfo.bgColor}">
+                                <i data-lucide="${prioInfo.icon}" class="w-6 h-6" style="color: ${prioInfo.color}"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                                    <h3 class="text-dark dark:text-white font-semibold">${reco}</h3>
+                                    <span class="px-3 py-1 rounded-full text-sm font-medium" style="background-color: ${prioInfo.bgColor}; color: ${prioInfo.color}; border: 1px solid ${prioInfo.borderColor}">
+                                        Priorité ${priority}
+                                    </span>
+                                </div>
+                                <p class="text-gray-600 dark:text-gray-300">
+                                    Basée sur l'analyse IA des dernières données collectées.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        document.getElementById('recommendations-container').innerHTML = html;
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }
+
+    function loadInsights(alerts) {
+        if (alerts.length === 0) {
+            document.getElementById('insights-container').innerHTML = `
+                <div class="text-center text-gray-500 py-8">
+                    <p>Pas assez de données pour générer des insights.</p>
+                </div>
+            `;
+            return;
+        }
+
+        const latestAlert = alerts[0];
+        const analysis = latestAlert.ai_analysis || {};
+
+        let html = `
+            <!-- Insight 1 -->
+            <div class="bg-light dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                <div class="flex items-start gap-3">
+                    <i data-lucide="heart" class="w-5 h-5 text-[#EF4444] flex-shrink-0 mt-1"></i>
+                    <div>
+                        <div class="text-dark dark:text-white font-medium mb-1">État actuel</div>
+                        <p class="text-gray-600 dark:text-gray-300">
+                            ${analysis.message || 'Données d\'analyse disponibles. Vérifiez la dernière alerte.'}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 2 -->
+            <div class="bg-light dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                <div class="flex items-start gap-3">
+                    <i data-lucide="activity" class="w-5 h-5 text-primary flex-shrink-0 mt-1"></i>
+                    <div>
+                        <div class="text-dark dark:text-white font-medium mb-1">Tendance</div>
+                        <p class="text-gray-600 dark:text-gray-300">
+                            Nombre total d'alertes enregistrées: <strong>${alerts.length}</strong>. Suivez votre progression.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight 3 -->
+            <div class="bg-light dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                <div class="flex items-start gap-3">
+                    <i data-lucide="trending-down" class="w-5 h-5 text-[#22C58E] flex-shrink-0 mt-1"></i>
+                    <div>
+                        <div class="text-dark dark:text-white font-medium mb-1">Confiance IA</div>
+                        <p class="text-gray-600 dark:text-gray-300">
+                            ${analysis.confidence ? `Confiance de l'analyse: <strong>${Math.round(analysis.confidence * 100)}%</strong>` : 'Données disponibles pour améliorer la précision.'}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('insights-container').innerHTML = html;
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }
+
+    // Télécharger le rapport en PDF
+    async function downloadReportPDF() {
+        try {
+            const response = await fetch('/api/alertes/?limit=100');
+            const data = await response.json();
+            
+            if (data.status !== 'success') {
+                alert('Erreur: Impossible de récupérer les données');
+                return;
+            }
+
+            // Créer un formulaire et soumettre
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/generate-report-pdf/';
+
+            const tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = 'csrfmiddlewaretoken';
+            tokenInput.value = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+            form.appendChild(tokenInput);
+
+            const alertsInput = document.createElement('input');
+            alertsInput.type = 'hidden';
+            alertsInput.name = 'alerts_data';
+            alertsInput.value = JSON.stringify(data.alerts);
+            form.appendChild(alertsInput);
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la génération du PDF');
+        }
+    }
+
+    // Charger les données au démarrage
+    loadReportData();
+    
+    // Rafraîchir toutes les 30 secondes
+    setInterval(loadReportData, 30000);
+
     // Gestion des tooltips
     document.addEventListener('DOMContentLoaded', function () {
-        // Réinitialiser les icônes Lucide après le chargement
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }

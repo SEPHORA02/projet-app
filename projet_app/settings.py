@@ -11,9 +11,12 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
@@ -37,11 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'health',
+    'health',
     'frontend',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -127,3 +131,25 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+FIREBASE_API_KEY = os.getenv("FIREBASE_API_KEY")
+
+# Configuration ESP8266
+ESP8266_BASE_URL = os.getenv("ESP8266_BASE_URL", "http://192.168.137.22")
+
+# Configuration FastAPI
+FASTAPI_URL = os.getenv("FASTAPI_URL", "http://localhost:9000")
+
+# Autoriser FastAPI à faire des requêtes
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:9000",
+    "http://127.0.0.1:9000",
+]
+
+# Ou si vous voulez autoriser tout (développement seulement)
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Important : autoriser les credentials
+CORS_ALLOW_CREDENTIALS = True
