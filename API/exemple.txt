@@ -1,0 +1,42 @@
+# ===== CONFIGURATION SYSTÈME DE SURVEILLANCE D'ASTHME =====
+
+# URL de l'API des capteurs (CHANGEZ L'IP ICI QUAND ELLE CHANGE!)
+SENSOR_API_URL=http://192.168.137.239/api/sensors
+
+# URL de Mistral via Ollama (local)
+MISTRAL_API_URL=http://localhost:11434/api/generate
+MISTRAL_MODEL=mistral
+
+# URL du dashboard Django pour les alertes
+DASHBOARD_URL=http://127.0.0.1:8000/alertes/
+
+# Intervalle de vérification (secondes)
+MONITORING_INTERVAL=5
+ERROR_RETRY_INTERVAL=30
+
+# Seuils d'alerte - Paramètres vitaux
+#HEART_RATE_MAX=100
+HEART_RATE_MAX=85
+HEART_RATE_MIN=50
+#RESPIRATORY_RATE_MAX=25
+RESPIRATORY_RATE_MIN=12
+RESPIRATORY_RATE_MAX=16
+BODY_TEMP_MAX=38.0
+BODY_TEMP_MIN=36.0
+
+# Seuils d'alerte - Environnement
+CO2_MAX=1000
+HUMIDITY_MAX=70
+HUMIDITY_MIN=30
+RISK_LEVEL_THRESHOLD=15
+#RISK_LEVEL_THRESHOLD=50
+
+# Timeouts (secondes)
+HTTP_TIMEOUT=10
+MISTRAL_TIMEOUT=60
+
+# Sécurité (optionnel)
+# DJANGO_API_KEY=votre_cle_api_ici
+
+# Mode debug (true/false)
+DEBUG=false

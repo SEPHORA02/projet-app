@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -132,3 +133,23 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 FIREBASE_API_KEY = os.getenv("FIREBASE_API_KEY")
+
+# Configuration ESP8266
+ESP8266_BASE_URL = os.getenv("ESP8266_BASE_URL", "http://192.168.137.22")
+
+# Configuration FastAPI
+FASTAPI_URL = os.getenv("FASTAPI_URL", "http://localhost:9000")
+
+# Autoriser FastAPI à faire des requêtes
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:9000",
+    "http://127.0.0.1:9000",
+]
+
+# Ou si vous voulez autoriser tout (développement seulement)
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Important : autoriser les credentials
+CORS_ALLOW_CREDENTIALS = True

@@ -201,36 +201,11 @@
                 Analyse IA - Prévention & Projection
             </h2>
         </div>
-        <div class="p-6 space-y-4">
-            <!-- Projection -->
-            <div class="bg-[#FFF8E1] dark:bg-gray-700 rounded-xl p-4 border border-[#FF9F43] flex items-start gap-3">
-                <i data-lucide="alert-circle" class="w-6 h-6 text-[#FF9F43] flex-shrink-0 mt-1"></i>
-                <div>
-                    <div class="text-dark dark:text-white font-medium mb-2">Projection à 4 heures</div>
-                    <p class="text-gray-700 dark:text-gray-300">
-                        Si les conditions actuelles persistent, le risque pourrait atteindre
-                        <strong> 45% (modéré)</strong> avec une probabilité de gêne respiratoire légère.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Recommandations -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
-                <div class="text-dark dark:text-white font-medium mb-3">Recommandations automatiques</div>
-                <ul class="space-y-2">
-                    <li class="flex items-start gap-2 text-gray-700 dark:text-gray-300">
-                        <div class="w-1.5 h-1.5 rounded-full bg-[#22C58E] mt-2 flex-shrink-0"></div>
-                        <span>Aérez la pièce pendant 10-15 minutes pour réduire le CO₂</span>
-                    </li>
-                    <li class="flex items-start gap-2 text-gray-700 dark:text-gray-300">
-                        <div class="w-1.5 h-1.5 rounded-full bg-[#22C58E] mt-2 flex-shrink-0"></div>
-                        <span>Maintenez une bonne hydratation (2L d'eau par jour)</span>
-                    </li>
-                    <li class="flex items-start gap-2 text-gray-700 dark:text-gray-300">
-                        <div class="w-1.5 h-1.5 rounded-full bg-[#22C58E] mt-2 flex-shrink-0"></div>
-                        <span>Pratiquez 5 minutes de respiration profonde toutes les 2 heures</span>
-                    </li>
-                </ul>
+        <div class="p-6 space-y-4" id="ai-analysis-container">
+            <!-- Chargement -->
+            <div class="text-center text-gray-500">
+                <i data-lucide="loader" class="w-6 h-6 animate-spin inline-block"></i>
+                Chargement de l'analyse...
             </div>
         </div>
     </div>
@@ -248,5 +223,97 @@
         month: 'long',
         day: 'numeric'
     });
+
+    // Charger l'analyse IA dynamiquement
+    async function loadAIAnalysis() {
+        try {
+            const response = await fetch('/api/alertes/?limit=1');
+            const data = await response.json();
+            
+            if (data.status === 'success' && data.alerts && data.alerts.length > 0) {
+                const latestAlert = data.alerts[0];
+                const analysis = latestAlert.ai_analysis || {};
+                const severity = latestAlert.severity;
+                
+                // Déterminer le risque et la couleur
+                const riskMap = {
+                    'critical': { percent: 80, label: 'Critique', color: '#FFFFFF', bgColor: '#DC2626', borderColor: '#B91C1C' },
+                    'high': { percent: 60, label: 'Élevé', color: '#FFFFFF', bgColor: '#EA580C', borderColor: '#C2410C' },
+                    'medium': { percent: 40, label: 'Modéré', color: '#FFFFFF', bgColor: '#0369A1', borderColor: '#0C4A6E' },
+                    'low': { percent: 20, label: 'Faible', color: '#FFFFFF', bgColor: '#059669', borderColor: '#065F46' }
+                };
+                
+                const riskInfo = riskMap[severity] || riskMap['low'];
+                
+                const html = `
+                    <!-- Projection -->
+                    <div class="rounded-xl p-4 border flex items-start gap-3" 
+                         style="background-color: ${riskInfo.bgColor}; border-color: ${riskInfo.borderColor}">
+                        <i data-lucide="alert-circle" class="w-6 h-6 flex-shrink-0 mt-1" style="color: ${riskInfo.color}"></i>
+                        <div>
+                            <div class="text-dark dark:text-white font-medium mb-2">Projection actuelle</div>
+                            <p class="text-gray-700 dark:text-gray-300">
+                                ${analysis.message || `Niveau de risque: <strong>${riskInfo.percent}% (${riskInfo.label})</strong>`}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Recommandations -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
+                        <div class="text-dark dark:text-white font-medium mb-3">Recommandations IA</div>
+                        <ul class="space-y-2">
+                            ${(analysis.recommendations || latestAlert.recommendations || [])
+                                .slice(0, 3)
+                                .map(reco => `
+                                <li class="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-[#22C58E] mt-2 flex-shrink-0"></div>
+                                    <span>${reco}</span>
+                                </li>
+                                `).join('')}
+                        </ul>
+                    </div>
+                    
+                    <!-- Confiance IA -->
+                    ${analysis.confidence ? `
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4">
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Confiance de l'analyse</div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mt-2">
+                            <div class="bg-primary h-2 rounded-full transition-all duration-300" 
+                                 style="width: ${Math.round(analysis.confidence * 100)}%"></div>
+                        </div>
+                        <div class="text-sm text-dark dark:text-white mt-1">${Math.round(analysis.confidence * 100)}%</div>
+                    </div>
+                    ` : ''}
+                `;
+                
+                document.getElementById('ai-analysis-container').innerHTML = html;
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            } else {
+                // Pas d'alertes, afficher un message
+                document.getElementById('ai-analysis-container').innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <i data-lucide="smile" class="w-8 h-8 inline-block mb-2"></i>
+                        <p>Aucune alerte pour le moment - Tout va bien! 😊</p>
+                    </div>
+                `;
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement de l\'analyse:', error);
+            document.getElementById('ai-analysis-container').innerHTML = `
+                <div class="text-center text-red-500">
+                    <p>Erreur lors du chargement de l'analyse</p>
+                </div>
+            `;
+        }
+    }
+
+    // Charger au démarrage et mettre à jour toutes les 30 secondes
+    loadAIAnalysis();
+    setInterval(loadAIAnalysis, 30000);
 </script>
 {% endblock %}
