@@ -2,26 +2,39 @@
 // Configuration de l'API ESP8266
 // ============================================
 
-const ESP8266_CONFIG = {
-    // Remplacez par l'adresse IP de votre ESP8266
-    baseUrl: 'http://192.168.137.223',
-    
-    // Endpoints de votre ESP8266
+let ESP8266_CONFIG = {
+    baseUrl: 'http://192.168.137.22', // Valeur par défaut
     endpoints: {
-        sensors: '/api/sensors',      // Toutes les données des capteurs
-        heartRate: '/api/heart',       // Rythme cardiaque
-        temperature: '/api/temp',      // Températures
-        respiratory: '/api/resp',      // Fréquence respiratoire
-        environment: '/api/env',       // Environnement (humidité, CO2)
-        riskLevel: '/api/risk'         // Niveau de risque calculé
+        sensors: '/api/sensors',
+        heartRate: '/api/heart',
+        temperature: '/api/temp',
+        respiratory: '/api/resp',
+        environment: '/api/env',
+        riskLevel: '/api/risk'
     },
-    
-    // Intervalle de rafraîchissement (en millisecondes)
-    refreshInterval: 5000, // 5 secondes
-    
-    // Timeout pour les requêtes
-    timeout: 3000 // 3 secondes
+    refreshInterval: 5000,
+    timeout: 3000
 };
+
+// Charger la configuration depuis Django
+async function loadESP8266Config() {
+    try {
+        const response = await fetch('/api/config/esp8266/');
+        if (response.ok) {
+            const config = await response.json();
+            ESP8266_CONFIG = {
+                ...ESP8266_CONFIG,
+                ...config
+            };
+            console.log('Configuration ESP8266 chargée depuis Django:', ESP8266_CONFIG);
+        }
+    } catch (error) {
+        console.warn('Impossible de charger la config ESP8266, utilisant les valeurs par défaut:', error);
+    }
+}
+
+// Charger la config au démarrage
+loadESP8266Config();
 
 // ============================================
 // Classe principale de l'API
