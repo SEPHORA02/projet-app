@@ -1,0 +1,319 @@
+{% extends 'frontend/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Tableau de Bord{% endblock %}
+
+{% block dashboard_content %}
+<div class="p-4 md:p-8 space-y-6">
+    <!-- En-tête -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-dark dark:text-white text-2xl font-bold mb-1">Bonjour, {{ user.first_name|title }}</h1>
+            <p class="text-gray-500 dark:text-gray-400 capitalize" id="current-date"></p>
+        </div>
+        <div class="flex items-center gap-2">
+            <!-- Indicateur de connexion ESP8266 -->
+            <div id="connection-status" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700">
+                <div id="status-indicator" class="w-2 h-2 rounded-full bg-gray-400"></div>
+                <span id="status-text" class="text-sm text-gray-600 dark:text-gray-400">Connexion...</span>
+            </div>
+            
+            <button onclick="toggleContrast()"
+                class="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300">
+                <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+                <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+                <span class="hidden sm:inline">Contraste</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Jauge de risque principale -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-dark dark:text-white text-xl font-semibold flex items-center gap-2">
+                <i data-lucide="activity" class="w-6 h-6 text-primary"></i>
+                Niveau de risque respiratoire
+            </h2>
+        </div>
+        <div class="p-6">
+            <div class="flex flex-col lg:flex-row items-center justify-center gap-8 py-6">
+                <!-- Jauge circulaire -->
+                <div class="relative">
+                    <svg class="w-64 h-64 transform -rotate-90">
+                        <circle cx="128" cy="128" r="80" stroke="#E5E7EB" stroke-width="16" fill="none"
+                            class="dark:stroke-gray-700"></circle>
+                        <circle cx="128" cy="128" r="80" stroke="#FF9F43" stroke-width="16" fill="none"
+                            stroke-dasharray="502.65" stroke-dashoffset="326.72" stroke-linecap="round"
+                            data-sensor="risk-gauge"></circle>
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <div class="text-3xl font-bold text-dark dark:text-white" 
+                             style="color: #FF9F43;" 
+                             data-sensor="risk-value">35</div>
+                        <div class="text-gray-500 dark:text-gray-400">sur 100</div>
+                    </div>
+                </div>
+
+                <!-- Légende -->
+                <div class="flex-1 space-y-4 max-w-md">
+                    <div class="flex items-center gap-3">
+                        <span class="px-4 py-2 rounded-lg text-lg font-medium"
+                            style="background-color: #f4e2d1; color:#FF9F43; border: 2px solid #FF9F43"
+                            data-sensor="risk-label">
+                            Risque modéré
+                        </span>
+                    </div>
+
+                    <div class="bg-light dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                        <div class="text-dark dark:text-white font-medium mb-2">État actuel</div>
+                        <p class="text-gray-600 dark:text-gray-300" data-sensor="risk-desc">
+                            Votre environnement est globalement favorable. Quelques ajustements sont recommandés pour
+                            optimiser votre confort respiratoire.
+                        </p>
+                    </div>
+
+                    <!-- Échelle de risque -->
+                    <div class="space-y-2">
+                        <div class="text-dark dark:text-white font-medium mb-2">Échelle de risque</div>
+                        <div class="flex items-center gap-2">
+                            <div class="flex-1 h-3 bg-[#22C58E] rounded-l-lg"></div>
+                            <div class="flex-1 h-3 bg-[#FF9F43]"></div>
+                            <div class="flex-1 h-3 bg-[#EF4444] rounded-r-lg"></div>
+                        </div>
+                        <div class="flex justify-between text-gray-500 dark:text-gray-400 text-sm">
+                            <span>0-30 Faible</span>
+                            <span>30-60 Modéré</span>
+                            <span>60-100 Élevé</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Données en temps réel -->
+    <div>
+        <h2 class="text-dark dark:text-white text-xl font-semibold mb-4">Données en temps réel</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Carte Rythme cardiaque -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-all">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center"
+                        style="background-color: #EF444415">
+                        <i data-lucide="heart" class="w-6 h-6" style="color: #EF4444"></i>
+                    </div>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400 mb-1">Rythme cardiaque</div>
+                <div class="flex items-baseline gap-2 mb-2">
+                    <span class="text-dark dark:text-white text-xl font-semibold" data-sensor="heart-rate-value">72</span>
+                    <span class="text-gray-500 dark:text-gray-400">bpm</span>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400" data-sensor="heart-rate-desc">Fréquence cardiaque normale</div>
+            </div>
+
+            <!-- Carte Température corporelle -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-all">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center"
+                        style="background-color: #F59E0B15">
+                        <i data-lucide="thermometer" class="w-6 h-6" style="color: #F59E0B"></i>
+                    </div>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400 mb-1">Température corporelle</div>
+                <div class="flex items-baseline gap-2 mb-2">
+                    <span class="text-dark dark:text-white text-xl font-semibold" data-sensor="body-temp-value">36.8</span>
+                    <span class="text-gray-500 dark:text-gray-400">°C</span>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400" data-sensor="body-temp-desc">Température optimale</div>
+            </div>
+
+            <!-- Carte Fréquence respiratoire -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-all">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center"
+                        style="background-color: #0A74DA15">
+                        <i data-lucide="wind" class="w-6 h-6" style="color: #0A74DA"></i>
+                    </div>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400 mb-1">Fréquence respiratoire</div>
+                <div class="flex items-baseline gap-2 mb-2">
+                    <span class="text-dark dark:text-white text-xl font-semibold" data-sensor="resp-rate-value">16</span>
+                    <span class="text-gray-500 dark:text-gray-400">/min</span>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400" data-sensor="resp-rate-desc">Respiration stable</div>
+            </div>
+
+            <!-- Carte Température ambiante -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-all">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center"
+                        style="background-color: #22C58E15">
+                        <i data-lucide="thermometer" class="w-6 h-6" style="color: #22C58E"></i>
+                    </div>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400 mb-1">Température ambiante</div>
+                <div class="flex items-baseline gap-2 mb-2">
+                    <span class="text-dark dark:text-white text-xl font-semibold" data-sensor="ambient-temp-value">22</span>
+                    <span class="text-gray-500 dark:text-gray-400">°C</span>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400" data-sensor="ambient-temp-desc">Environnement confortable</div>
+            </div>
+
+            <!-- Carte Humidité -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-all">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center"
+                        style="background-color: #0A74DA15">
+                        <i data-lucide="droplets" class="w-6 h-6" style="color: #0A74DA"></i>
+                    </div>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400 mb-1">Humidité</div>
+                <div class="flex items-baseline gap-2 mb-2">
+                    <span class="text-dark dark:text-white text-xl font-semibold" data-sensor="humidity-value">55</span>
+                    <span class="text-gray-500 dark:text-gray-400">%</span>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400" data-sensor="humidity-desc">Niveau idéal</div>
+            </div>
+
+            <!-- Carte Qualité de l'air -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-all">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center"
+                        style="background-color: #22C58E15">
+                        <i data-lucide="cloud" class="w-6 h-6" style="color: #22C58E"></i>
+                    </div>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400 mb-1">Qualité de l'air</div>
+                <div class="flex items-baseline gap-2 mb-2">
+                    <span class="text-dark dark:text-white text-xl font-semibold" data-sensor="air-quality-value">420</span>
+                    <span class="text-gray-500 dark:text-gray-400">ppm CO₂</span>
+                </div>
+                <div class="text-gray-500 dark:text-gray-400" data-sensor="air-quality-desc">Air sain</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analyse IA -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl border-2 border-primary">
+        <div class="p-6 border-b border-primary">
+            <h2 class="text-primary text-xl font-semibold flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-6 h-6"></i>
+                Analyse IA - Prévention & Projection
+            </h2>
+        </div>
+        <div class="p-6 space-y-4" id="ai-analysis-container">
+            <!-- Chargement -->
+            <div class="text-center text-gray-500">
+                <i data-lucide="loader" class="w-6 h-6 animate-spin inline-block"></i>
+                Chargement de l'analyse...
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inclure les fichiers JavaScript -->
+<script src="{% static 'frontend/js/api.js' %}"></script>
+<script src="{% static 'frontend/js/dashboard.js' %}"></script>
+
+<script>
+    // Afficher la date actuelle
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+
+    // Charger l'analyse IA dynamiquement
+    async function loadAIAnalysis() {
+        try {
+            const response = await fetch('/api/alertes/?limit=1');
+            const data = await response.json();
+            
+            if (data.status === 'success' && data.alerts && data.alerts.length > 0) {
+                const latestAlert = data.alerts[0];
+                const analysis = latestAlert.ai_analysis || {};
+                const severity = latestAlert.severity;
+                
+                // Déterminer le risque et la couleur
+                const riskMap = {
+                    'critical': { percent: 80, label: 'Critique', color: '#FFFFFF', bgColor: '#DC2626', borderColor: '#B91C1C' },
+                    'high': { percent: 60, label: 'Élevé', color: '#FFFFFF', bgColor: '#EA580C', borderColor: '#C2410C' },
+                    'medium': { percent: 40, label: 'Modéré', color: '#FFFFFF', bgColor: '#0369A1', borderColor: '#0C4A6E' },
+                    'low': { percent: 20, label: 'Faible', color: '#FFFFFF', bgColor: '#059669', borderColor: '#065F46' }
+                };
+                
+                const riskInfo = riskMap[severity] || riskMap['low'];
+                
+                const html = `
+                    <!-- Projection -->
+                    <div class="rounded-xl p-4 border flex items-start gap-3" 
+                         style="background-color: ${riskInfo.bgColor}; border-color: ${riskInfo.borderColor}">
+                        <i data-lucide="alert-circle" class="w-6 h-6 flex-shrink-0 mt-1" style="color: ${riskInfo.color}"></i>
+                        <div>
+                            <div class="text-dark dark:text-white font-medium mb-2">Projection actuelle</div>
+                            <p class="text-gray-700 dark:text-gray-300">
+                                ${analysis.message || `Niveau de risque: <strong>${riskInfo.percent}% (${riskInfo.label})</strong>`}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Recommandations -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
+                        <div class="text-dark dark:text-white font-medium mb-3">Recommandations IA</div>
+                        <ul class="space-y-2">
+                            ${(analysis.recommendations || latestAlert.recommendations || [])
+                                .slice(0, 3)
+                                .map(reco => `
+                                <li class="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-[#22C58E] mt-2 flex-shrink-0"></div>
+                                    <span>${reco}</span>
+                                </li>
+                                `).join('')}
+                        </ul>
+                    </div>
+                    
+                    <!-- Confiance IA -->
+                    ${analysis.confidence ? `
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4">
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Confiance de l'analyse</div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mt-2">
+                            <div class="bg-primary h-2 rounded-full transition-all duration-300" 
+                                 style="width: ${Math.round(analysis.confidence * 100)}%"></div>
+                        </div>
+                        <div class="text-sm text-dark dark:text-white mt-1">${Math.round(analysis.confidence * 100)}%</div>
+                    </div>
+                    ` : ''}
+                `;
+                
+                document.getElementById('ai-analysis-container').innerHTML = html;
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            } else {
+                // Pas d'alertes, afficher un message
+                document.getElementById('ai-analysis-container').innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <i data-lucide="smile" class="w-8 h-8 inline-block mb-2"></i>
+                        <p>Aucune alerte pour le moment - Tout va bien! 😊</p>
+                    </div>
+                `;
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement de l\'analyse:', error);
+            document.getElementById('ai-analysis-container').innerHTML = `
+                <div class="text-center text-red-500">
+                    <p>Erreur lors du chargement de l'analyse</p>
+                </div>
+            `;
+        }
+    }
+
+    // Charger au démarrage et mettre à jour toutes les 30 secondes
+    loadAIAnalysis();
+    setInterval(loadAIAnalysis, 30000);
+</script>
+{% endblock %}

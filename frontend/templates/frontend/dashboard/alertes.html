@@ -1,0 +1,121 @@
+{% extends 'frontend/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Alertes{% endblock %}
+
+{% block dashboard_content %}
+<div class="p-4 md:p-8 space-y-6">
+    <!-- En-tête -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-dark dark:text-white text-2xl font-bold mb-1">Alertes & Notifications</h1>
+            <p class="text-gray-500 dark:text-gray-400">Suivi en temps réel de votre santé</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="px-3 py-1 bg-[#FEF3C7] text-[#D97706] border border-[#FF9F43] rounded-full text-sm font-medium">
+                <span data-stat="total">0</span> alerte<span data-stat="plural">s</span>
+            </span>
+            <button onclick="alertsManager && alertsManager.updateAlerts()"
+                class="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">Actualiser</span>
+            </button>
+            <button onclick="toggleContrast()"
+                class="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300">
+                <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+                <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+                <span class="hidden sm:inline">Contraste</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Statistiques rapides -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- Alertes attention -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl border-2 border-[#FF9F43]">
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-gray-500 dark:text-gray-400 mb-1">Alertes attention</div>
+                        <div class="text-dark dark:text-white text-xl font-semibold" data-stat="attention">0</div>
+                    </div>
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-[#FEF3C7]">
+                        <i data-lucide="alert-triangle" class="w-6 h-6 text-[#FF9F43]"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informations -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl border-2 border-primary">
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-gray-500 dark:text-gray-400 mb-1">Informations</div>
+                        <div class="text-dark dark:text-white text-xl font-semibold" data-stat="info">0</div>
+                    </div>
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-[#DBEAFE]">
+                        <i data-lucide="info" class="w-6 h-6 text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Améliorations -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl border-2 border-[#22C58E]">
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-gray-500 dark:text-gray-400 mb-1">Améliorations</div>
+                        <div class="text-dark dark:text-white text-xl font-semibold" data-stat="improvement">0</div>
+                    </div>
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-[#D1FAE5]">
+                        <i data-lucide="check-circle" class="w-6 h-6 text-[#22C58E]"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertes récentes -->
+    <div>
+        <h2 class="text-dark dark:text-white text-xl font-semibold mb-4">Alertes récentes</h2>
+        <div class="space-y-3" id="alertes-container">
+            <!-- Les alertes seront chargées par le script JavaScript -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
+                <i data-lucide="loader" class="w-16 h-16 mx-auto mb-4 text-gray-400 animate-spin"></i>
+                <h3 class="text-dark dark:text-white font-semibold mb-2">Chargement...</h3>
+                <p class="text-gray-500 dark:text-gray-400">Récupération des alertes...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="{% static 'frontend/js/alerts-manager.js' %}"></script>
+<script>
+// Fonction pour basculer le contraste
+function toggleContrast() {
+    document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+}
+
+// Restaurer le thème sauvegardé
+function restoreTheme() {
+    const theme = localStorage.getItem('theme') || 'light';
+    if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+    }
+}
+
+// Initialiser le thème
+restoreTheme();
+
+// Initialiser Lucide icons après chargement
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+});
+</script>
+{% endblock %}
