@@ -31,3 +31,7 @@ ENV/
 # Fichiers système
 .DS_Store
 Thumbs.db 
+
+#firebase
+.firebase/
+config/firebase.json
