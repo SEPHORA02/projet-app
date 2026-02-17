@@ -20,6 +20,8 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib import colors
 from reportlab.pdfgen import canvas
 
+from firebase_admin import auth
+
 if FIREBASE_INITIALIZED:
     from firebase_admin import auth
 else:
