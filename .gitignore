@@ -41,4 +41,5 @@ config/firebase_key.json
 .env
 
 # Clé de service Firebase (ne pas versionner)
+*.key.json
 serviceAccountKey.json
