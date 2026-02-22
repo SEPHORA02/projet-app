@@ -135,7 +135,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 FIREBASE_API_KEY = os.getenv("FIREBASE_API_KEY")
 
 # Configuration ESP8266
-ESP8266_BASE_URL = os.getenv("ESP8266_BASE_URL", "http://192.168.1.83")
+ESP8266_BASE_URL = os.getenv("ESP8266_BASE_URL", "http://192.168.137.22")
 
 # Configuration FastAPI
 FASTAPI_URL = os.getenv("FASTAPI_URL", "http://localhost:9000")

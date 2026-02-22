@@ -26,10 +26,10 @@ ENV/
 .env
 .venv
 
-
 # Clé de service Firebase (ne pas versionner)
 *.key.json
-serviceAccountKey.json 
+serviceAccountKey.json
+config.json
 
 # IDE
 .vscode/

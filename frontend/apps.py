@@ -5,5 +5,4 @@ class FrontendConfig(AppConfig):
     name = 'frontend'
 
     def ready(self):
-         pass
-         import frontend.firebase
+        import frontend.firebase

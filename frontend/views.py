@@ -9,7 +9,7 @@ from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 
 # from frontend.firebase import FIREBASE_INITIALIZED
-FIREBASE_INITIALIZED = False
+from frontend.firebase import FIREBASE_INITIALIZED
 
 from django.views.decorators.http import require_http_methods
 from frontend.models import Alert
