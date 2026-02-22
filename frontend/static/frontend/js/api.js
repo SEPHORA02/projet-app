@@ -3,7 +3,9 @@
 // ============================================
 
 let ESP8266_CONFIG = {
+
     baseUrl: 'http://192.168.137.22', // Valeur par défaut
+
     endpoints: {
         sensors: '/api/sensors',
         heartRate: '/api/heart',

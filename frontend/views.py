@@ -7,7 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse
+
 from frontend.firebase import FIREBASE_INITIALIZED
+
 from django.views.decorators.http import require_http_methods
 from frontend.models import Alert
 import json

@@ -24,9 +24,12 @@ ENV/
 
 # Environnement
 .env
+.venv
 
-# Firebase key
-config/firebase_key.json
+
+# Clé de service Firebase (ne pas versionner)
+*.key.json
+serviceAccountKey.json 
 
 # IDE
 .vscode/
