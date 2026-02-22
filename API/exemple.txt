@@ -1,7 +1,7 @@
 # ===== CONFIGURATION SYSTÈME DE SURVEILLANCE D'ASTHME =====
 
 # URL de l'API des capteurs (CHANGEZ L'IP ICI QUAND ELLE CHANGE!)
-SENSOR_API_URL=http://192.168.137.239/api/sensors
+SENSOR_API_URL=http://192.168.1.83/api/sensors
 
 # URL de Mistral via Ollama (local)
 MISTRAL_API_URL=http://localhost:11434/api/generate

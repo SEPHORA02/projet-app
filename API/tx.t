@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     
     # URLs
     
-    SENSOR_API_URL: str = Field(default="http://192.168.137.239/api/sensors")
+    SENSOR_API_URL: str = Field(default="http://192.168.1.83/api/sensors")
     MISTRAL_API_URL: str = Field(default="http://localhost:11434/api/generate")
     MISTRAL_MODEL: str = Field(default="mistral")
     DASHBOARD_URL: str = Field(default="http://127.0.0.1:8000/alertes/")
