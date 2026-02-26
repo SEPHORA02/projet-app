@@ -25,11 +25,13 @@ class Settings(BaseSettings):
     
     # URLs
 
-    SENSOR_API_URL: str = Field(default="http://192.168.137.22/api/sensors")
+    SENSOR_API_URL: str = Field(default="http://192.168.1.135/api/sensors")
 
     MISTRAL_API_URL: str = Field(default="http://localhost:11434/api/generate")
     MISTRAL_MODEL: str = Field(default="mistral")
-    DASHBOARD_URL: str = Field(default="http://localhost:8000/alertes/")
+    # endpoint Django pour recevoir les alertes depuis FastAPI
+    # utiliser la route "api/alerts/receive/" défini dans frontend/urls.py
+    DASHBOARD_URL: str = Field(default="http://localhost:8000/api/alerts/receive/")
     
     # Monitoring
     MONITORING_INTERVAL: int = Field(default=5)
@@ -590,4 +592,4 @@ async def update_sensor_url(new_url: str):
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=9000, reload=True)
+    uvicorn.run("main:app", port=9000, reload=True)

@@ -26,12 +26,12 @@ class Settings(BaseSettings):
     # URLs
     
 <<<<<<< HEAD
-    SENSOR_API_URL: str = Field(default="http://192.168.1.83/api/sensors")
+    SENSOR_API_URL: str = Field(default="http://192.168.137.67/api/sensors")
 =======
 <<<<<<< HEAD
-    SENSOR_API_URL: str = Field(default="http://192.168.137.239/api/sensors")
+    SENSOR_API_URL: str = Field(default="http://192.168.137.67/api/sensors")
 =======
-    SENSOR_API_URL: str = Field(default="http://192.168.1.83/api/sensors")
+    SENSOR_API_URL: str = Field(default="http://192.168.137.67/api/sensors")
 >>>>>>> fc4100a2d236f33b773db45f6e6af062816b3bdf
 >>>>>>> 78b8f5a394b01a52a8ec48f58be0373a47c60f3e
     MISTRAL_API_URL: str = Field(default="http://localhost:11434/api/generate")
