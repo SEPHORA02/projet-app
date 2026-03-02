@@ -4,7 +4,7 @@
 
 const ESP8266_CONFIG = {
     // Remplacez par l'adresse IP de votre ESP8266
-    baseUrl: 'http://192.168.1.83',
+    baseUrl: 'http://192.168.67.104',
     
     // Endpoints de votre ESP8266
     endpoints: {
